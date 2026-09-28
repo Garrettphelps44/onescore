@@ -1,0 +1,7053 @@
+{
+ "version": "3.0",
+ "how_to_read": [
+  "Layer 2 decision fields (dec.*) store the chosen option label. Look it up in \"decisions\" and apply its \"sets\" values.",
+  "Layer 4 advanced fields are optional. A filled advanced field overrides the value its decision set.",
+  "A decision option with empty \"sets\" (Strength: Custom) means the matching advanced fields become required.",
+  "Layer 3 program fields are read as-is. Checkboxes store /Yes or /Off. Philosophy and meta fields are not imported.",
+  "Import fails with the sheet name and question text if any required field is empty."
+ ],
+ "decision_only_keys": [
+  "body.location",
+  "body.pain_route",
+  "cond.practice",
+  "cond.pregame",
+  "core4.red",
+  "override.athlete_sees",
+  "override.owner",
+  "override.parent",
+  "override.red_notify",
+  "override.sport_coach",
+  "override.sport_red_streak",
+  "override.up_reason",
+  "override.who",
+  "override.yellow_streak",
+  "phase.multisport",
+  "phase.transition",
+  "profile.build_for",
+  "profile.bw_update",
+  "profile.new_plan",
+  "profile.no_max",
+  "team.gameday",
+  "team.load_method",
+  "team.postgame_cap",
+  "team.practice_speed",
+  "team.practice_strength"
+ ],
+ "decisions": [
+  {
+   "key": "dec.score.caution",
+   "question": "How cautious are you with a tired athlete?",
+   "options": [
+    {
+     "label": "Protect them",
+     "meaning": "Green takes 80+. More Yellow and Red days.",
+     "sets": {
+      "score.green_min": 80,
+      "score.yellow_min": 60
+     }
+    },
+    {
+     "label": "Balanced (STS)",
+     "meaning": "Green takes 75+. Red below 55.",
+     "sets": {
+      "score.green_min": 75,
+      "score.yellow_min": 55
+     }
+    },
+    {
+     "label": "Push them",
+     "meaning": "Green takes 70+. Fewer pull-back days.",
+     "sets": {
+      "score.green_min": 70,
+      "score.yellow_min": 50
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.score.one_night",
+   "question": "How much should one bad night count?",
+   "options": [
+    {
+     "label": "A lot",
+     "meaning": "Today's check-in drives the day.",
+     "sets": {
+      "score.trend_pct": 20
+     }
+    },
+    {
+     "label": "Balanced (STS)",
+     "meaning": "Today counts most. The week still matters.",
+     "sets": {
+      "score.trend_pct": 40
+     }
+    },
+    {
+     "label": "Very little",
+     "meaning": "The week's trend drives the day.",
+     "sets": {
+      "score.trend_pct": 60
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.score.priority",
+   "question": "What matters most in the check-in?",
+   "options": [
+    {
+     "label": "Balanced (STS)",
+     "meaning": "Sleep 40, soreness 20, stress 15, energy 15, nutrition 10.",
+     "sets": {
+      "score.w.sleep_hours": 25,
+      "score.w.sleep_quality": 15,
+      "score.w.soreness": 20,
+      "score.w.stress": 15,
+      "score.w.energy": 15,
+      "score.w.nutrition": 10
+     }
+    },
+    {
+     "label": "Sleep first",
+     "meaning": "Sleep 55. Everything else shares the rest.",
+     "sets": {
+      "score.w.sleep_hours": 35,
+      "score.w.sleep_quality": 20,
+      "score.w.soreness": 15,
+      "score.w.stress": 10,
+      "score.w.energy": 10,
+      "score.w.nutrition": 10
+     }
+    },
+    {
+     "label": "Body first",
+     "meaning": "Soreness and energy 50.",
+     "sets": {
+      "score.w.sleep_hours": 20,
+      "score.w.sleep_quality": 10,
+      "score.w.soreness": 30,
+      "score.w.stress": 10,
+      "score.w.energy": 20,
+      "score.w.nutrition": 10
+     }
+    },
+    {
+     "label": "Life stress first",
+     "meaning": "Outside stress 30.",
+     "sets": {
+      "score.w.sleep_hours": 20,
+      "score.w.sleep_quality": 10,
+      "score.w.soreness": 15,
+      "score.w.stress": 30,
+      "score.w.energy": 15,
+      "score.w.nutrition": 10
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.score.load_memory",
+   "question": "How far back should the app look at training load?",
+   "options": [
+    {
+     "label": "Short memory",
+     "meaning": "This week vs the last 3 weeks.",
+     "sets": {
+      "score.acute_days": 5,
+      "score.chronic_days": 21,
+      "score.tonnage_divisor": 100
+     }
+    },
+    {
+     "label": "Standard (STS)",
+     "meaning": "This week vs the last 4 weeks.",
+     "sets": {
+      "score.acute_days": 7,
+      "score.chronic_days": 28,
+      "score.tonnage_divisor": 100
+     }
+    },
+    {
+     "label": "Long memory",
+     "meaning": "This week and a half vs the last 5 weeks.",
+     "sets": {
+      "score.acute_days": 10,
+      "score.chronic_days": 35,
+      "score.tonnage_divisor": 100
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.score.load_jump",
+   "question": "When training load jumps fast, you...",
+   "options": [
+    {
+     "label": "Pull back hard",
+     "meaning": "Smaller jump drops a zone.",
+     "sets": {
+      "score.ac_high": 1.3,
+      "score.ac_high_action": "Drop one zone"
+     }
+    },
+    {
+     "label": "Pull back (STS)",
+     "meaning": "A big jump drops a zone.",
+     "sets": {
+      "score.ac_high": 1.5,
+      "score.ac_high_action": "Drop one zone"
+     }
+    },
+    {
+     "label": "Only flag it",
+     "meaning": "Coach gets flagged. Plan stays.",
+     "sets": {
+      "score.ac_high": 1.5,
+      "score.ac_high_action": "Flag coach only"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.score.light",
+   "question": "A fresh athlete who has been under-loaded...",
+   "options": [
+    {
+     "label": "Gets more work (STS)",
+     "meaning": "Build day: an extra set on Green.",
+     "sets": {
+      "score.ac_low": 0.8,
+      "score.ac_low_action": "Build day"
+     }
+    },
+    {
+     "label": "Keeps the plan",
+     "meaning": "No extra work.",
+     "sets": {
+      "score.ac_low": 0.8,
+      "score.ac_low_action": "No change"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.test.sensitivity",
+   "question": "How much should a drop in the weekly test affect the day?",
+   "options": [
+    {
+     "label": "Big deal",
+     "meaning": "Small drops cost points.",
+     "sets": {
+      "test.drop1.pct": 3,
+      "test.drop1.pts": 5,
+      "test.drop2.pct": 5,
+      "test.drop2.pts": 15
+     }
+    },
+    {
+     "label": "Balanced (STS)",
+     "meaning": "Down 4% costs 5 pts. Down 7% costs 10.",
+     "sets": {
+      "test.drop1.pct": 4,
+      "test.drop1.pts": 5,
+      "test.drop2.pct": 7,
+      "test.drop2.pts": 10
+     }
+    },
+    {
+     "label": "Small deal",
+     "meaning": "Only big drops cost points.",
+     "sets": {
+      "test.drop1.pct": 6,
+      "test.drop1.pts": 3,
+      "test.drop2.pct": 10,
+      "test.drop2.pts": 5
+     }
+    },
+    {
+     "label": "Track only",
+     "meaning": "Recorded. Never changes the score.",
+     "sets": {
+      "test.drop1.pct": 100,
+      "test.drop1.pts": 0,
+      "test.drop2.pct": 100,
+      "test.drop2.pts": 0
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.test.baseline",
+   "question": "Compare each test to the athlete's last...",
+   "options": [
+    {
+     "label": "2 weeks",
+     "meaning": "Quick to react.",
+     "sets": {
+      "test.baseline_days": 14
+     }
+    },
+    {
+     "label": "Month (STS)",
+     "meaning": "Steady.",
+     "sets": {
+      "test.baseline_days": 30
+     }
+    },
+    {
+     "label": "2 months",
+     "meaning": "Slow to react.",
+     "sets": {
+      "test.baseline_days": 60
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.test.retest",
+   "question": "Re-test anchor maxes every...",
+   "options": [
+    {
+     "label": "4 weeks (STS)",
+     "meaning": "",
+     "sets": {
+      "test.max_retest_weeks": 4
+     }
+    },
+    {
+     "label": "6 weeks",
+     "meaning": "",
+     "sets": {
+      "test.max_retest_weeks": 6
+     }
+    },
+    {
+     "label": "8 weeks",
+     "meaning": "",
+     "sets": {
+      "test.max_retest_weeks": 8
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.test.tired",
+   "question": "On Yellow and Red days, testing...",
+   "options": [
+    {
+     "label": "Always runs",
+     "meaning": "Test as scheduled.",
+     "sets": {
+      "test.yellow": "Test as scheduled",
+      "test.red": "Test as scheduled"
+     }
+    },
+    {
+     "label": "Protects (STS)",
+     "meaning": "Yellow: weekly test only. Red: none.",
+     "sets": {
+      "test.yellow": "Weekly test only",
+      "test.red": "No testing"
+     }
+    },
+    {
+     "label": "Stops",
+     "meaning": "No testing on Yellow or Red.",
+     "sets": {
+      "test.yellow": "No testing",
+      "test.red": "No testing"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.test.bar",
+   "question": "Do you track bar speed every session?",
+   "options": [
+    {
+     "label": "No (STS)",
+     "meaning": "",
+     "sets": {
+      "test.bar_speed": "Off",
+      "test.bar_speed_drop_pct": 0
+     }
+    },
+    {
+     "label": "Yes",
+     "meaning": "Bar speed down 10% drops a zone.",
+     "sets": {
+      "test.bar_speed": "On",
+      "test.bar_speed_drop_pct": 10
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.core4.red",
+   "question": "On a Red day, prep...",
+   "options": [
+    {
+     "label": "Stays the same (STS)",
+     "meaning": "Full prep every day.",
+     "sets": {
+      "core4.red": "Same as written"
+     }
+    },
+    {
+     "label": "Gets shorter",
+     "meaning": "1 set of each.",
+     "sets": {
+      "core4.red": "1 set each"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.skill.order",
+   "question": "Which comes first after Core 4?",
+   "options": [
+    {
+     "label": "Skill (STS)",
+     "meaning": "Skill fresh, then speed.",
+     "sets": {
+      "skill.order": "Skill, then speed"
+     }
+    },
+    {
+     "label": "Speed",
+     "meaning": "Sprints fresh, then skill.",
+     "sets": {
+      "skill.order": "Speed, then skill"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.skill.tired",
+   "question": "On tired days, skill work...",
+   "options": [
+    {
+     "label": "Stays mostly",
+     "meaning": "Yellow keeps 80%. Red: technique reps at 60%.",
+     "sets": {
+      "skill.yellow_pct": 80,
+      "skill.red_mode": "Technique reps",
+      "skill.red_pct": 60
+     }
+    },
+    {
+     "label": "Scales down (STS)",
+     "meaning": "Yellow keeps 70%. Red: technique reps at 50%.",
+     "sets": {
+      "skill.yellow_pct": 70,
+      "skill.red_mode": "Technique reps",
+      "skill.red_pct": 50
+     }
+    },
+    {
+     "label": "Cuts hard",
+     "meaning": "Yellow keeps 50%. Red: no skill block.",
+     "sets": {
+      "skill.yellow_pct": 50,
+      "skill.red_mode": "Remove block",
+      "skill.red_pct": 0
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.skill.gameday",
+   "question": "The game day skill primer is...",
+   "options": [
+    {
+     "label": "Light",
+     "meaning": "30% of normal.",
+     "sets": {
+      "skill.game_pct": 30
+     }
+    },
+    {
+     "label": "Moderate (STS)",
+     "meaning": "50% of normal.",
+     "sets": {
+      "skill.game_pct": 50
+     }
+    },
+    {
+     "label": "Full",
+     "meaning": "Normal amount.",
+     "sets": {
+      "skill.game_pct": 100
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.speed.tired",
+   "question": "On tired days, speed work...",
+   "options": [
+    {
+     "label": "Protects quality (STS)",
+     "meaning": "Yellow: 2 fewer reps, never below 2. Red: none.",
+     "sets": {
+      "speed.yellow_minus": 2,
+      "speed.min_reps": 2,
+      "speed.red": "Remove"
+     }
+    },
+    {
+     "label": "Keeps sprinting",
+     "meaning": "Yellow: 1 fewer rep. Red: half reps.",
+     "sets": {
+      "speed.yellow_minus": 1,
+      "speed.min_reps": 3,
+      "speed.red": "Half reps"
+     }
+    },
+    {
+     "label": "Stops",
+     "meaning": "No sprinting on Yellow or Red.",
+     "sets": {
+      "speed.yellow_minus": 99,
+      "speed.min_reps": 0,
+      "speed.red": "Remove"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.str.block",
+   "question": "How does the anchor progress across the off-season?",
+   "options": [
+    {
+     "label": "Volume first (STS)",
+     "meaning": "Sets climb 3 to 5, then load climbs.",
+     "sets": {
+      "str.block.1.sets": 3,
+      "str.block.1.reps": 5,
+      "str.block.1.pct": 70,
+      "str.block.2.sets": 4,
+      "str.block.2.reps": 5,
+      "str.block.2.pct": 72,
+      "str.block.3.sets": 5,
+      "str.block.3.reps": 5,
+      "str.block.3.pct": 75,
+      "str.block.4.sets": 4,
+      "str.block.4.reps": 4,
+      "str.block.4.pct": 80,
+      "str.block.5.sets": 3,
+      "str.block.5.reps": 3,
+      "str.block.5.pct": 85
+     }
+    },
+    {
+     "label": "Steady",
+     "meaning": "4 x 5 at 75% the whole block.",
+     "sets": {
+      "str.block.1.sets": 4,
+      "str.block.1.reps": 5,
+      "str.block.1.pct": 75,
+      "str.block.2.sets": 4,
+      "str.block.2.reps": 5,
+      "str.block.2.pct": 75,
+      "str.block.3.sets": 4,
+      "str.block.3.reps": 5,
+      "str.block.3.pct": 75,
+      "str.block.4.sets": 4,
+      "str.block.4.reps": 5,
+      "str.block.4.pct": 75,
+      "str.block.5.sets": 4,
+      "str.block.5.reps": 5,
+      "str.block.5.pct": 75
+     }
+    },
+    {
+     "label": "Intensity first",
+     "meaning": "Reps drop 6 to 2 as load climbs.",
+     "sets": {
+      "str.block.1.sets": 4,
+      "str.block.1.reps": 6,
+      "str.block.1.pct": 70,
+      "str.block.2.sets": 4,
+      "str.block.2.reps": 5,
+      "str.block.2.pct": 75,
+      "str.block.3.sets": 4,
+      "str.block.3.reps": 4,
+      "str.block.3.pct": 80,
+      "str.block.4.sets": 4,
+      "str.block.4.reps": 3,
+      "str.block.4.pct": 85,
+      "str.block.5.sets": 3,
+      "str.block.5.reps": 2,
+      "str.block.5.pct": 90
+     }
+    },
+    {
+     "label": "Custom",
+     "meaning": "Fill the block table in Layer 4.",
+     "sets": {}
+    }
+   ]
+  },
+  {
+   "key": "dec.str.tired",
+   "question": "On tired days, the anchor lift...",
+   "options": [
+    {
+     "label": "Protects",
+     "meaning": "Yellow: 1 less set at 85%. Red: 3 x 3 at 55%, no accessories.",
+     "sets": {
+      "str.yellow.anchor_sets": -1,
+      "str.yellow.load_pct": 85,
+      "str.yellow.acc_sets": -1,
+      "str.red.sets": 3,
+      "str.red.reps": 3,
+      "str.red.pct": 55,
+      "str.red.acc": "Remove"
+     }
+    },
+    {
+     "label": "Balanced (STS)",
+     "meaning": "Yellow: 1 less set at 90%. Red: 3 x 3 at 60%, no accessories.",
+     "sets": {
+      "str.yellow.anchor_sets": -1,
+      "str.yellow.load_pct": 90,
+      "str.yellow.acc_sets": -1,
+      "str.red.sets": 3,
+      "str.red.reps": 3,
+      "str.red.pct": 60,
+      "str.red.acc": "Remove"
+     }
+    },
+    {
+     "label": "Keeps lifting",
+     "meaning": "Yellow: same sets at 90%. Red: 3 x 3 at 65%, 1 accessory set.",
+     "sets": {
+      "str.yellow.anchor_sets": 0,
+      "str.yellow.load_pct": 90,
+      "str.yellow.acc_sets": 0,
+      "str.red.sets": 3,
+      "str.red.reps": 3,
+      "str.red.pct": 65,
+      "str.red.acc": "1 set each"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.str.build",
+   "question": "On a Build day, add...",
+   "options": [
+    {
+     "label": "1 set (STS)",
+     "meaning": "Anchor and accessories.",
+     "sets": {
+      "str.build_sets": 1
+     }
+    },
+    {
+     "label": "2 sets",
+     "meaning": "Anchor and accessories.",
+     "sets": {
+      "str.build_sets": 2
+     }
+    },
+    {
+     "label": "Nothing",
+     "meaning": "Build days off.",
+     "sets": {
+      "str.build_sets": 0
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.cond.practice",
+   "question": "On practice days, extra conditioning is...",
+   "options": [
+    {
+     "label": "None (STS)",
+     "meaning": "Practice covers it.",
+     "sets": {
+      "cond.practice": "None"
+     }
+    },
+    {
+     "label": "Half",
+     "meaning": "",
+     "sets": {
+      "cond.practice": "Half"
+     }
+    },
+    {
+     "label": "Full",
+     "meaning": "",
+     "sets": {
+      "cond.practice": "Full"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.cond.pregame",
+   "question": "The day before a game, conditioning is...",
+   "options": [
+    {
+     "label": "None (STS)",
+     "meaning": "",
+     "sets": {
+      "cond.pregame": "None"
+     }
+    },
+    {
+     "label": "Half",
+     "meaning": "",
+     "sets": {
+      "cond.pregame": "Half"
+     }
+    },
+    {
+     "label": "Full",
+     "meaning": "",
+     "sets": {
+      "cond.pregame": "Full"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.cond.tired",
+   "question": "On tired days, conditioning...",
+   "options": [
+    {
+     "label": "Scales down (STS)",
+     "meaning": "Yellow: half. Red: none.",
+     "sets": {
+      "cond.yellow_pct": 50,
+      "cond.red": "None"
+     }
+    },
+    {
+     "label": "Mostly stays",
+     "meaning": "Yellow: 75%. Red: half.",
+     "sets": {
+      "cond.yellow_pct": 75,
+      "cond.red": "Half"
+     }
+    },
+    {
+     "label": "Stops",
+     "meaning": "None on Yellow or Red.",
+     "sets": {
+      "cond.yellow_pct": 0,
+      "cond.red": "None"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.team.load",
+   "question": "Who rates how hard practice was?",
+   "options": [
+    {
+     "label": "Athlete (STS)",
+     "meaning": "Athlete taps RPE after practice.",
+     "sets": {
+      "team.load_method": "Athlete RPE x minutes"
+     }
+    },
+    {
+     "label": "Coach",
+     "meaning": "Coach tags the whole practice once.",
+     "sets": {
+      "team.load_method": "Coach intensity tag x minutes"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.team.practice_day",
+   "question": "On practice days, the weight room does...",
+   "options": [
+    {
+     "label": "Prep, skill, short speed (STS)",
+     "meaning": "No lifting.",
+     "sets": {
+      "team.practice_strength": "None",
+      "team.practice_speed": "Practice-day drill"
+     }
+    },
+    {
+     "label": "Prep, skill, light lift",
+     "meaning": "Reduced strength, short speed.",
+     "sets": {
+      "team.practice_strength": "Reduced",
+      "team.practice_speed": "Practice-day drill"
+     }
+    },
+    {
+     "label": "Prep and skill only",
+     "meaning": "No lifting or sprinting.",
+     "sets": {
+      "team.practice_strength": "None",
+      "team.practice_speed": "None"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.team.gameday",
+   "question": "On game day, the athlete does...",
+   "options": [
+    {
+     "label": "Prep + skill primer (STS)",
+     "meaning": "",
+     "sets": {
+      "team.gameday": "Core 4 + skill primer"
+     }
+    },
+    {
+     "label": "Prep only",
+     "meaning": "",
+     "sets": {
+      "team.gameday": "Core 4 only"
+     }
+    },
+    {
+     "label": "Nothing",
+     "meaning": "Just play.",
+     "sets": {
+      "team.gameday": "Nothing"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.team.postgame",
+   "question": "The day after a game is...",
+   "options": [
+    {
+     "label": "Never Green (STS)",
+     "meaning": "Capped at Yellow.",
+     "sets": {
+      "team.postgame_cap": "Yellow"
+     }
+    },
+    {
+     "label": "Recovery only",
+     "meaning": "Capped at Red.",
+     "sets": {
+      "team.postgame_cap": "Red"
+     }
+    },
+    {
+     "label": "Score decides",
+     "meaning": "No cap.",
+     "sets": {
+      "team.postgame_cap": "No cap"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.nutr.fuel",
+   "question": "How hard do you push fueling?",
+   "options": [
+    {
+     "label": "Maintain",
+     "meaning": "Hold bodyweight.",
+     "sets": {
+      "nutr.cal.off": 14,
+      "nutr.cal.lift": 16,
+      "nutr.cal.practice": 18,
+      "nutr.cal.game": 18,
+      "nutr.fat": 0.4
+     }
+    },
+    {
+     "label": "Perform (STS)",
+     "meaning": "Fuel the work.",
+     "sets": {
+      "nutr.cal.off": 15,
+      "nutr.cal.lift": 18,
+      "nutr.cal.practice": 20,
+      "nutr.cal.game": 20,
+      "nutr.fat": 0.4
+     }
+    },
+    {
+     "label": "Gain",
+     "meaning": "Add size.",
+     "sets": {
+      "nutr.cal.off": 17,
+      "nutr.cal.lift": 20,
+      "nutr.cal.practice": 22,
+      "nutr.cal.game": 22,
+      "nutr.fat": 0.4
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.nutr.protein",
+   "question": "Protein target",
+   "options": [
+    {
+     "label": "Standard",
+     "meaning": "0.8 g per lb.",
+     "sets": {
+      "nutr.protein": 0.8
+     }
+    },
+    {
+     "label": "High (STS)",
+     "meaning": "1 g per lb.",
+     "sets": {
+      "nutr.protein": 1.0
+     }
+    },
+    {
+     "label": "Very high",
+     "meaning": "1.2 g per lb.",
+     "sets": {
+      "nutr.protein": 1.2
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.nutr.miss",
+   "question": "Missed nutrition yesterday...",
+   "options": [
+    {
+     "label": "Counts (STS)",
+     "meaning": "Loses the nutrition points.",
+     "sets": {
+      "nutr.miss": "Lose nutrition points"
+     }
+    },
+    {
+     "label": "Tracked only",
+     "meaning": "No score change.",
+     "sets": {
+      "nutr.miss": "No score impact"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.nutr.minor",
+   "question": "Calorie deficits for athletes under 18...",
+   "options": [
+    {
+     "label": "Never (STS)",
+     "meaning": "",
+     "sets": {
+      "nutr.minor_deficit": "Not allowed"
+     }
+    },
+    {
+     "label": "With a dietitian",
+     "meaning": "Only with a registered dietitian and a parent.",
+     "sets": {
+      "nutr.minor_deficit": "Only with dietitian and parent"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.nutr.tired",
+   "question": "On Yellow and Red days, nutrition...",
+   "options": [
+    {
+     "label": "Same targets",
+     "meaning": "",
+     "sets": {
+      "nutr.yellow": "Same",
+      "nutr.red": "Same"
+     }
+    },
+    {
+     "label": "Protect recovery (STS)",
+     "meaning": "Protein first. No deficit on Red.",
+     "sets": {
+      "nutr.yellow": "Same, protein first",
+      "nutr.red": "Same, no deficit"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.sleep.standard",
+   "question": "Your sleep goal for athletes is...",
+   "options": [
+    {
+     "label": "7+ hours",
+     "meaning": "Taps: under 5, 5, 6, 7, 8+.",
+     "sets": {
+      "sleep.tap1": 5,
+      "sleep.tap2": 5,
+      "sleep.tap3": 6,
+      "sleep.tap4": 7,
+      "sleep.tap5": 8
+     }
+    },
+    {
+     "label": "8+ hours (STS)",
+     "meaning": "Taps: under 6, 6, 7, 8, 9+.",
+     "sets": {
+      "sleep.tap1": 6,
+      "sleep.tap2": 6,
+      "sleep.tap3": 7,
+      "sleep.tap4": 8,
+      "sleep.tap5": 9
+     }
+    },
+    {
+     "label": "9+ hours",
+     "meaning": "Taps: under 7, 7, 8, 9, 10+. Younger athletes.",
+     "sets": {
+      "sleep.tap1": 7,
+      "sleep.tap2": 7,
+      "sleep.tap3": 8,
+      "sleep.tap4": 9,
+      "sleep.tap5": 10
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.sleep.flag",
+   "question": "When an athlete keeps sleeping short...",
+   "options": [
+    {
+     "label": "Talk to them (STS)",
+     "meaning": "3 nights under 7 hrs: coach conversation.",
+     "sets": {
+      "sleep.flag.nights": 3,
+      "sleep.flag.under": 7,
+      "sleep.flag.action": "Coach conversation"
+     }
+    },
+    {
+     "label": "Talk and hold back",
+     "meaning": "3 nights under 7: talk + cap at Yellow.",
+     "sets": {
+      "sleep.flag.nights": 3,
+      "sleep.flag.under": 7,
+      "sleep.flag.action": "Both"
+     }
+    },
+    {
+     "label": "Catch it early",
+     "meaning": "2 nights under 7: talk + cap at Yellow.",
+     "sets": {
+      "sleep.flag.nights": 2,
+      "sleep.flag.under": 7,
+      "sleep.flag.action": "Both"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.stress.flag",
+   "question": "When stress stays high...",
+   "options": [
+    {
+     "label": "Talk after 2 days (STS)",
+     "meaning": "Stress at 1 for 2 days: conversation.",
+     "sets": {
+      "stress.flag.level": 1,
+      "stress.flag.days": 2,
+      "stress.flag.action": "Coach conversation"
+     }
+    },
+    {
+     "label": "Talk right away",
+     "meaning": "Stress at 2 or lower for 1 day: conversation.",
+     "sets": {
+      "stress.flag.level": 2,
+      "stress.flag.days": 1,
+      "stress.flag.action": "Coach conversation"
+     }
+    },
+    {
+     "label": "Talk and hold back",
+     "meaning": "Stress at 1 for 2 days: talk + cap at Yellow.",
+     "sets": {
+      "stress.flag.level": 1,
+      "stress.flag.days": 2,
+      "stress.flag.action": "Both"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.stress.window",
+   "question": "During exam weeks and travel...",
+   "options": [
+    {
+     "label": "Never Green (STS)",
+     "meaning": "Capped at Yellow.",
+     "sets": {
+      "stress.window_cap": "Cap at Yellow"
+     }
+    },
+    {
+     "label": "Score decides",
+     "meaning": "No cap.",
+     "sets": {
+      "stress.window_cap": "No cap"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.body.flag",
+   "question": "When soreness stays high...",
+   "options": [
+    {
+     "label": "Check after 3 days (STS)",
+     "meaning": "Soreness at 1 for 3 days: coach check.",
+     "sets": {
+      "body.flag.level": 1,
+      "body.flag.days": 3,
+      "body.flag.action": "Coach check"
+     }
+    },
+    {
+     "label": "Check after 2 days",
+     "meaning": "Soreness at 1 for 2 days: coach check.",
+     "sets": {
+      "body.flag.level": 1,
+      "body.flag.days": 2,
+      "body.flag.action": "Coach check"
+     }
+    },
+    {
+     "label": "Check and hold back",
+     "meaning": "Soreness at 1 for 2 days: check + cap at Yellow.",
+     "sets": {
+      "body.flag.level": 1,
+      "body.flag.days": 2,
+      "body.flag.action": "Both"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.body.pain",
+   "question": "Pain (sharp, joint, one side) goes to...",
+   "options": [
+    {
+     "label": "Athletic trainer (STS)",
+     "meaning": "",
+     "sets": {
+      "body.pain_route": "Athletic trainer"
+     }
+    },
+    {
+     "label": "Head coach",
+     "meaning": "",
+     "sets": {
+      "body.pain_route": "Head coach"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.body.location",
+   "question": "Should athletes tap where they are sore?",
+   "options": [
+    {
+     "label": "No (STS)",
+     "meaning": "Keeps check-in under 30 seconds.",
+     "sets": {
+      "body.location": "Off"
+     }
+    },
+    {
+     "label": "Yes",
+     "meaning": "Adds a body-map tap.",
+     "sets": {
+      "body.location": "On"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.avail.out",
+   "question": "An athlete who is Out does...",
+   "options": [
+    {
+     "label": "Prep + rehab (STS)",
+     "meaning": "",
+     "sets": {
+      "avail.out_plan": "Core 4 + rehab"
+     }
+    },
+    {
+     "label": "Rehab only",
+     "meaning": "",
+     "sets": {
+      "avail.out_plan": "Rehab only"
+     }
+    },
+    {
+     "label": "Prep only",
+     "meaning": "",
+     "sets": {
+      "avail.out_plan": "Core 4 only"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.avail.clear",
+   "question": "Who can clear an athlete to train?",
+   "options": [
+    {
+     "label": "Either (STS)",
+     "meaning": "Athletic trainer or medical provider.",
+     "sets": {
+      "avail.clear_by": "Either"
+     }
+    },
+    {
+     "label": "Athletic trainer",
+     "meaning": "",
+     "sets": {
+      "avail.clear_by": "Athletic trainer"
+     }
+    },
+    {
+     "label": "Medical provider",
+     "meaning": "",
+     "sets": {
+      "avail.clear_by": "Medical provider"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.avail.return",
+   "question": "After an injury, the anchor lift comes back...",
+   "options": [
+    {
+     "label": "Slowly",
+     "meaning": "Start at 50%, add 5% a week.",
+     "sets": {
+      "avail.rtt.start_pct": 50,
+      "avail.rtt.step_pct": 5
+     }
+    },
+    {
+     "label": "Steadily (STS)",
+     "meaning": "Start at 60%, add 10% a week.",
+     "sets": {
+      "avail.rtt.start_pct": 60,
+      "avail.rtt.step_pct": 10
+     }
+    },
+    {
+     "label": "Quickly",
+     "meaning": "Start at 70%, add 15% a week.",
+     "sets": {
+      "avail.rtt.start_pct": 70,
+      "avail.rtt.step_pct": 15
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.phase.off",
+   "question": "The off-season is for...",
+   "options": [
+    {
+     "label": "Building everything (STS)",
+     "meaning": "Full accessories, full conditioning, Build days on.",
+     "sets": {
+      "phase.off.acc_sets": 3,
+      "phase.off.speed_add": 0,
+      "phase.off.cond_pct": 100,
+      "phase.off.build": "Yes"
+     }
+    },
+    {
+     "label": "Strength first",
+     "meaning": "Full accessories, 60% conditioning.",
+     "sets": {
+      "phase.off.acc_sets": 3,
+      "phase.off.speed_add": 0,
+      "phase.off.cond_pct": 60,
+      "phase.off.build": "Yes"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.phase.pre",
+   "question": "The preseason is for...",
+   "options": [
+    {
+     "label": "Getting sport-ready (STS)",
+     "meaning": "Anchor 3 x 5 at 75%. More speed and conditioning.",
+     "sets": {
+      "phase.pre.anchor_sets": 3,
+      "phase.pre.anchor_reps": 5,
+      "phase.pre.anchor_pct": 75,
+      "phase.pre.acc_sets": 3,
+      "phase.pre.speed_add": 2,
+      "phase.pre.cond_pct": 125,
+      "phase.pre.build": "Yes"
+     }
+    },
+    {
+     "label": "Holding strength",
+     "meaning": "Anchor 4 x 5 at 77%. A little more speed.",
+     "sets": {
+      "phase.pre.anchor_sets": 4,
+      "phase.pre.anchor_reps": 5,
+      "phase.pre.anchor_pct": 77,
+      "phase.pre.acc_sets": 3,
+      "phase.pre.speed_add": 1,
+      "phase.pre.cond_pct": 110,
+      "phase.pre.build": "Yes"
+     }
+    },
+    {
+     "label": "Conditioning push",
+     "meaning": "Anchor 3 x 5 at 70%. Conditioning way up.",
+     "sets": {
+      "phase.pre.anchor_sets": 3,
+      "phase.pre.anchor_reps": 5,
+      "phase.pre.anchor_pct": 70,
+      "phase.pre.acc_sets": 2,
+      "phase.pre.speed_add": 2,
+      "phase.pre.cond_pct": 150,
+      "phase.pre.build": "Yes"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.phase.in",
+   "question": "In-season lifting is...",
+   "options": [
+    {
+     "label": "Heavy, low volume (STS)",
+     "meaning": "Anchor 3 x 4 at 80%. 2 accessory sets. No conditioning.",
+     "sets": {
+      "phase.in.anchor_sets": 3,
+      "phase.in.anchor_reps": 4,
+      "phase.in.anchor_pct": 80,
+      "phase.in.acc_sets": 2,
+      "phase.in.speed_add": 0,
+      "phase.in.cond_pct": 0,
+      "phase.in.build": "No"
+     }
+    },
+    {
+     "label": "Moderate",
+     "meaning": "Anchor 2 x 5 at 75%. 2 accessory sets.",
+     "sets": {
+      "phase.in.anchor_sets": 2,
+      "phase.in.anchor_reps": 5,
+      "phase.in.anchor_pct": 75,
+      "phase.in.acc_sets": 2,
+      "phase.in.speed_add": 0,
+      "phase.in.cond_pct": 0,
+      "phase.in.build": "No"
+     }
+    },
+    {
+     "label": "Minimal",
+     "meaning": "Anchor 2 x 3 at 80%. No accessories.",
+     "sets": {
+      "phase.in.anchor_sets": 2,
+      "phase.in.anchor_reps": 3,
+      "phase.in.anchor_pct": 80,
+      "phase.in.acc_sets": 0,
+      "phase.in.speed_add": 0,
+      "phase.in.cond_pct": 0,
+      "phase.in.build": "No"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.phase.post",
+   "question": "The postseason is...",
+   "options": [
+    {
+     "label": "Off the bar (STS)",
+     "meaning": "Prep and play only.",
+     "sets": {
+      "phase.post.anchor_sets": 0,
+      "phase.post.anchor_reps": 0,
+      "phase.post.anchor_pct": 0,
+      "phase.post.acc_sets": 0,
+      "phase.post.speed_add": 0,
+      "phase.post.cond_pct": 0,
+      "phase.post.build": "No"
+     }
+    },
+    {
+     "label": "Light lifting",
+     "meaning": "Anchor 2 x 5 at 60%. 1 accessory set.",
+     "sets": {
+      "phase.post.anchor_sets": 2,
+      "phase.post.anchor_reps": 5,
+      "phase.post.anchor_pct": 60,
+      "phase.post.acc_sets": 1,
+      "phase.post.speed_add": 0,
+      "phase.post.cond_pct": 0,
+      "phase.post.build": "No"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.phase.transition",
+   "question": "The first week of a new phase...",
+   "options": [
+    {
+     "label": "Eases in (STS)",
+     "meaning": "One step lower in volume.",
+     "sets": {
+      "phase.transition": "One step lower in volume"
+     }
+    },
+    {
+     "label": "Starts full",
+     "meaning": "",
+     "sets": {
+      "phase.transition": "No change"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.phase.multisport",
+   "question": "A multi-sport athlete follows...",
+   "options": [
+    {
+     "label": "In-season sport (STS)",
+     "meaning": "",
+     "sets": {
+      "phase.multisport": "In-season sport wins"
+     }
+    },
+    {
+     "label": "Primary sport",
+     "meaning": "",
+     "sets": {
+      "phase.multisport": "Primary sport wins"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.profile.levels",
+   "question": "Who counts as a new lifter?",
+   "options": [
+    {
+     "label": "Under 1 year (STS)",
+     "meaning": "Advanced at 3+ years.",
+     "sets": {
+      "profile.new_years": 1,
+      "profile.adv_years": 3
+     }
+    },
+    {
+     "label": "Under 2 years",
+     "meaning": "Advanced at 4+ years.",
+     "sets": {
+      "profile.new_years": 2,
+      "profile.adv_years": 4
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.profile.new_plan",
+   "question": "A new lifter starts with...",
+   "options": [
+    {
+     "label": "Technique first (STS)",
+     "meaning": "Core 4 and anchor technique only.",
+     "sets": {
+      "profile.new_plan": "Core 4 + anchor technique only"
+     }
+    },
+    {
+     "label": "Full plan, light",
+     "meaning": "Standard plan at technique loads.",
+     "sets": {
+      "profile.new_plan": "Standard plan at technique loads"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.profile.build",
+   "question": "Build days are for...",
+   "options": [
+    {
+     "label": "Everyone past new (STS)",
+     "meaning": "",
+     "sets": {
+      "profile.build_for": "Everyone"
+     }
+    },
+    {
+     "label": "Advanced only",
+     "meaning": "",
+     "sets": {
+      "profile.build_for": "Advanced only"
+     }
+    },
+    {
+     "label": "No one",
+     "meaning": "",
+     "sets": {
+      "profile.build_for": "No one"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.profile.no_max",
+   "question": "An athlete with no tested max lifts...",
+   "options": [
+    {
+     "label": "Technique weights (STS)",
+     "meaning": "",
+     "sets": {
+      "profile.no_max": "Technique weights"
+     }
+    },
+    {
+     "label": "Coach sets load",
+     "meaning": "",
+     "sets": {
+      "profile.no_max": "Coach sets load"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.profile.bw",
+   "question": "Bodyweight gets updated...",
+   "options": [
+    {
+     "label": "Weekly",
+     "meaning": "",
+     "sets": {
+      "profile.bw_update": "Weekly"
+     }
+    },
+    {
+     "label": "Monthly (STS)",
+     "meaning": "",
+     "sets": {
+      "profile.bw_update": "Monthly"
+     }
+    },
+    {
+     "label": "Each test day",
+     "meaning": "",
+     "sets": {
+      "profile.bw_update": "Each test day"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.override.who",
+   "question": "Who can override an athlete's zone?",
+   "options": [
+    {
+     "label": "Head coach only",
+     "meaning": "",
+     "sets": {
+      "override.who": "Head coach only"
+     }
+    },
+    {
+     "label": "Head coach + AT (STS)",
+     "meaning": "Head coach and athletic trainer.",
+     "sets": {
+      "override.who": "Head coach + athletic trainer"
+     }
+    },
+    {
+     "label": "Any coach",
+     "meaning": "",
+     "sets": {
+      "override.who": "Any coach"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.override.up",
+   "question": "Moving an athlete up a zone...",
+   "options": [
+    {
+     "label": "Needs a reason (STS)",
+     "meaning": "One line, reviewed weekly.",
+     "sets": {
+      "override.up_reason": "Reason required"
+     }
+    },
+    {
+     "label": "No reason needed",
+     "meaning": "",
+     "sets": {
+      "override.up_reason": "No reason required"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.override.red",
+   "question": "When an athlete is Red, the coach hears...",
+   "options": [
+    {
+     "label": "Same day (STS)",
+     "meaning": "",
+     "sets": {
+      "override.red_notify": "Same day"
+     }
+    },
+    {
+     "label": "Next morning",
+     "meaning": "",
+     "sets": {
+      "override.red_notify": "Next morning"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.override.yellow",
+   "question": "An athlete stuck in Yellow gets a conversation after...",
+   "options": [
+    {
+     "label": "2 days",
+     "meaning": "",
+     "sets": {
+      "override.yellow_streak": 2
+     }
+    },
+    {
+     "label": "3 days (STS)",
+     "meaning": "",
+     "sets": {
+      "override.yellow_streak": 3
+     }
+    },
+    {
+     "label": "5 days",
+     "meaning": "",
+     "sets": {
+      "override.yellow_streak": 5
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.override.sport",
+   "question": "Sport coaches get...",
+   "options": [
+    {
+     "label": "Daily summary",
+     "meaning": "Alert after 1 Red day.",
+     "sets": {
+      "override.sport_coach": "Daily",
+      "override.sport_red_streak": 1
+     }
+    },
+    {
+     "label": "Weekly summary (STS)",
+     "meaning": "Alert after 2 Red days in a row.",
+     "sets": {
+      "override.sport_coach": "Weekly",
+      "override.sport_red_streak": 2
+     }
+    },
+    {
+     "label": "Nothing",
+     "meaning": "",
+     "sets": {
+      "override.sport_coach": "Off",
+      "override.sport_red_streak": 0
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.override.parent",
+   "question": "Parents get a report...",
+   "options": [
+    {
+     "label": "Weekly",
+     "meaning": "",
+     "sets": {
+      "override.parent": "Weekly"
+     }
+    },
+    {
+     "label": "Monthly (STS)",
+     "meaning": "",
+     "sets": {
+      "override.parent": "Monthly"
+     }
+    },
+    {
+     "label": "Never",
+     "meaning": "",
+     "sets": {
+      "override.parent": "Off"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.override.owner",
+   "question": "The owner gets a report...",
+   "options": [
+    {
+     "label": "Weekly",
+     "meaning": "",
+     "sets": {
+      "override.owner": "Weekly"
+     }
+    },
+    {
+     "label": "Monthly (STS)",
+     "meaning": "",
+     "sets": {
+      "override.owner": "Monthly"
+     }
+    },
+    {
+     "label": "Never",
+     "meaning": "",
+     "sets": {
+      "override.owner": "Off"
+     }
+    }
+   ]
+  },
+  {
+   "key": "dec.override.athlete",
+   "question": "Athletes see...",
+   "options": [
+    {
+     "label": "Score + plan (STS)",
+     "meaning": "Nothing else.",
+     "sets": {
+      "override.athlete_sees": "Score + plan"
+     }
+    },
+    {
+     "label": "Score + plan + reason",
+     "meaning": "A one-line reason for their zone.",
+     "sets": {
+      "override.athlete_sees": "Score + plan + reason"
+     }
+    }
+   ]
+  }
+ ],
+ "fields": [
+  {
+   "key": "score.w.sleep_hours",
+   "label": "Sleep hours weight",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "pts",
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.w.sleep_quality",
+   "label": "Sleep quality weight",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "pts",
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.w.soreness",
+   "label": "Soreness weight",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "pts",
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.w.stress",
+   "label": "Stress weight",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "pts",
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.w.energy",
+   "label": "Energy weight",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "pts",
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.w.nutrition",
+   "label": "Nutrition weight",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "pts",
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.trend_pct",
+   "label": "Trend weight",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.green_min",
+   "label": "Green starts at",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.yellow_min",
+   "label": "Yellow starts at",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.tonnage_divisor",
+   "label": "Tonnage divisor",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.acute_days",
+   "label": "Acute window",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "days",
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.chronic_days",
+   "label": "Chronic window",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "days",
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.ac_high",
+   "label": "A:C high line",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.ac_high_action",
+   "label": "Above the high line",
+   "type": "choice",
+   "options": [
+    "Drop one zone",
+    "Cap at Yellow",
+    "Flag coach only"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.ac_low",
+   "label": "A:C low line",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "score.ac_low_action",
+   "label": "Below the low line on Green",
+   "type": "choice",
+   "options": [
+    "Build day",
+    "No change"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.weekly.name",
+   "label": "Test name",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "program"
+  },
+  {
+   "key": "test.weekly.day",
+   "label": "Test day",
+   "type": "choice",
+   "options": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "program"
+  },
+  {
+   "key": "test.weekly.unit",
+   "label": "Unit",
+   "type": "choice",
+   "options": [
+    "in",
+    "cm",
+    "sec",
+    "lb",
+    "m/s"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "program"
+  },
+  {
+   "key": "test.weekly.better",
+   "label": "Higher or lower is better",
+   "type": "choice",
+   "options": [
+    "Higher",
+    "Lower"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "program"
+  },
+  {
+   "key": "test.baseline_days",
+   "label": "Baseline window",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "days",
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.drop1.pct",
+   "label": "Small drop starts at",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.drop1.pts",
+   "label": "Small drop: points off",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.drop2.pct",
+   "label": "Big drop starts at",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.drop2.pts",
+   "label": "Big drop: points off",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.max_retest_weeks",
+   "label": "Re-test maxes every",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "weeks",
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.yellow",
+   "label": "Yellow day testing",
+   "type": "choice",
+   "options": [
+    "Test as scheduled",
+    "Weekly test only",
+    "No testing"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.red",
+   "label": "Red day testing",
+   "type": "choice",
+   "options": [
+    "Test as scheduled",
+    "Weekly test only",
+    "No testing"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.bar_speed",
+   "label": "Bar speed check",
+   "type": "choice",
+   "options": [
+    "Off",
+    "On"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "test.bar_speed_drop_pct",
+   "label": "Bar speed drop that lowers a zone",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "02-testing",
+   "layer": "advanced"
+  },
+  {
+   "key": "core4.1.name",
+   "label": "Your Core 4: 1 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.1.sets",
+   "label": "Your Core 4: 1 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.1.dose",
+   "label": "Your Core 4: 1 Reps / Dose",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.1.tag",
+   "label": "Your Core 4: 1 Tag",
+   "type": "choice",
+   "options": [
+    "None",
+    "Lower",
+    "Upper",
+    "Jump"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.2.name",
+   "label": "Your Core 4: 2 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.2.sets",
+   "label": "Your Core 4: 2 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.2.dose",
+   "label": "Your Core 4: 2 Reps / Dose",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.2.tag",
+   "label": "Your Core 4: 2 Tag",
+   "type": "choice",
+   "options": [
+    "None",
+    "Lower",
+    "Upper",
+    "Jump"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.3.name",
+   "label": "Your Core 4: 3 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.3.sets",
+   "label": "Your Core 4: 3 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.3.dose",
+   "label": "Your Core 4: 3 Reps / Dose",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.3.tag",
+   "label": "Your Core 4: 3 Tag",
+   "type": "choice",
+   "options": [
+    "None",
+    "Lower",
+    "Upper",
+    "Jump"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.4.name",
+   "label": "Your Core 4: 4 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.4.sets",
+   "label": "Your Core 4: 4 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.4.dose",
+   "label": "Your Core 4: 4 Reps / Dose",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "core4.4.tag",
+   "label": "Your Core 4: 4 Tag",
+   "type": "choice",
+   "options": [
+    "None",
+    "Lower",
+    "Upper",
+    "Jump"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.sport",
+   "label": "Your drills by sport: Sport 1 Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d1.name",
+   "label": "Your drills by sport:   Drill 1 Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d1.amount",
+   "label": "Your drills by sport:   Drill 1 Amount",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d1.unit",
+   "label": "Your drills by sport:   Drill 1 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d1.contact",
+   "label": "Your drills by sport:   Drill 1 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d2.name",
+   "label": "Your drills by sport:   Drill 2 Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d2.amount",
+   "label": "Your drills by sport:   Drill 2 Amount",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d2.unit",
+   "label": "Your drills by sport:   Drill 2 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d2.contact",
+   "label": "Your drills by sport:   Drill 2 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d3.name",
+   "label": "Your drills by sport:   Drill 3 Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d3.amount",
+   "label": "Your drills by sport:   Drill 3 Amount",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d3.unit",
+   "label": "Your drills by sport:   Drill 3 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s1.d3.contact",
+   "label": "Your drills by sport:   Drill 3 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.sport",
+   "label": "Your drills by sport: Sport 2 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d1.name",
+   "label": "Your drills by sport:   Drill 1 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d1.amount",
+   "label": "Your drills by sport:   Drill 1 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d1.unit",
+   "label": "Your drills by sport:   Drill 1 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d1.contact",
+   "label": "Your drills by sport:   Drill 1 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d2.name",
+   "label": "Your drills by sport:   Drill 2 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d2.amount",
+   "label": "Your drills by sport:   Drill 2 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d2.unit",
+   "label": "Your drills by sport:   Drill 2 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d2.contact",
+   "label": "Your drills by sport:   Drill 2 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d3.name",
+   "label": "Your drills by sport:   Drill 3 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d3.amount",
+   "label": "Your drills by sport:   Drill 3 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d3.unit",
+   "label": "Your drills by sport:   Drill 3 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s2.d3.contact",
+   "label": "Your drills by sport:   Drill 3 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.sport",
+   "label": "Your drills by sport: Sport 3 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d1.name",
+   "label": "Your drills by sport:   Drill 1 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d1.amount",
+   "label": "Your drills by sport:   Drill 1 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d1.unit",
+   "label": "Your drills by sport:   Drill 1 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d1.contact",
+   "label": "Your drills by sport:   Drill 1 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d2.name",
+   "label": "Your drills by sport:   Drill 2 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d2.amount",
+   "label": "Your drills by sport:   Drill 2 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d2.unit",
+   "label": "Your drills by sport:   Drill 2 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d2.contact",
+   "label": "Your drills by sport:   Drill 2 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d3.name",
+   "label": "Your drills by sport:   Drill 3 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d3.amount",
+   "label": "Your drills by sport:   Drill 3 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d3.unit",
+   "label": "Your drills by sport:   Drill 3 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s3.d3.contact",
+   "label": "Your drills by sport:   Drill 3 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.sport",
+   "label": "Your drills by sport: Sport 4 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d1.name",
+   "label": "Your drills by sport:   Drill 1 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d1.amount",
+   "label": "Your drills by sport:   Drill 1 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d1.unit",
+   "label": "Your drills by sport:   Drill 1 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d1.contact",
+   "label": "Your drills by sport:   Drill 1 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d2.name",
+   "label": "Your drills by sport:   Drill 2 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d2.amount",
+   "label": "Your drills by sport:   Drill 2 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d2.unit",
+   "label": "Your drills by sport:   Drill 2 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d2.contact",
+   "label": "Your drills by sport:   Drill 2 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d3.name",
+   "label": "Your drills by sport:   Drill 3 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d3.amount",
+   "label": "Your drills by sport:   Drill 3 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d3.unit",
+   "label": "Your drills by sport:   Drill 3 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s4.d3.contact",
+   "label": "Your drills by sport:   Drill 3 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.sport",
+   "label": "Your drills by sport: Sport 5 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d1.name",
+   "label": "Your drills by sport:   Drill 1 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d1.amount",
+   "label": "Your drills by sport:   Drill 1 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d1.unit",
+   "label": "Your drills by sport:   Drill 1 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d1.contact",
+   "label": "Your drills by sport:   Drill 1 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d2.name",
+   "label": "Your drills by sport:   Drill 2 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d2.amount",
+   "label": "Your drills by sport:   Drill 2 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d2.unit",
+   "label": "Your drills by sport:   Drill 2 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d2.contact",
+   "label": "Your drills by sport:   Drill 2 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d3.name",
+   "label": "Your drills by sport:   Drill 3 Drill",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d3.amount",
+   "label": "Your drills by sport:   Drill 3 Amount",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d3.unit",
+   "label": "Your drills by sport:   Drill 3 Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "makes",
+    "shots",
+    "swings",
+    "yd"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.s5.d3.contact",
+   "label": "Your drills by sport:   Drill 3 Contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "program"
+  },
+  {
+   "key": "skill.yellow_pct",
+   "label": "Yellow: amount kept",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "04-sport-skill",
+   "layer": "advanced"
+  },
+  {
+   "key": "skill.red_mode",
+   "label": "Red: mode",
+   "type": "choice",
+   "options": [
+    "Technique reps",
+    "Remove block"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "advanced"
+  },
+  {
+   "key": "skill.red_pct",
+   "label": "Red: amount kept",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "04-sport-skill",
+   "layer": "advanced"
+  },
+  {
+   "key": "skill.game_pct",
+   "label": "Game day primer",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "04-sport-skill",
+   "layer": "advanced"
+  },
+  {
+   "key": "skill.order",
+   "label": "Session order",
+   "type": "choice",
+   "options": [
+    "Skill, then speed",
+    "Speed, then skill"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "advanced"
+  },
+  {
+   "key": "speed.a.name",
+   "label": "Your speed work: Day A Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "program"
+  },
+  {
+   "key": "speed.a.reps",
+   "label": "Your speed work: Day A Reps",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "program"
+  },
+  {
+   "key": "speed.b.name",
+   "label": "Your speed work: Day B Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "program"
+  },
+  {
+   "key": "speed.b.reps",
+   "label": "Your speed work: Day B Reps",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "program"
+  },
+  {
+   "key": "speed.c.name",
+   "label": "Your speed work: Day C Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "program"
+  },
+  {
+   "key": "speed.c.reps",
+   "label": "Your speed work: Day C Reps",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "program"
+  },
+  {
+   "key": "speed.practice.name",
+   "label": "Your speed work: Practice day Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "program"
+  },
+  {
+   "key": "speed.practice.reps",
+   "label": "Your speed work: Practice day Reps",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "program"
+  },
+  {
+   "key": "speed.yellow_minus",
+   "label": "Yellow: reps removed",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "advanced"
+  },
+  {
+   "key": "speed.min_reps",
+   "label": "Minimum reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "advanced"
+  },
+  {
+   "key": "speed.red",
+   "label": "Red day",
+   "type": "choice",
+   "options": [
+    "Remove",
+    "Half reps",
+    "Same"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.1.sets",
+   "label": "Custom 20-week block: 1 to 4 Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.1.reps",
+   "label": "Custom 20-week block: 1 to 4 Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.1.pct",
+   "label": "Custom 20-week block: 1 to 4 % Of Training Max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.2.sets",
+   "label": "Custom 20-week block: 5 to 8 Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.2.reps",
+   "label": "Custom 20-week block: 5 to 8 Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.2.pct",
+   "label": "Custom 20-week block: 5 to 8 % Of Training Max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.3.sets",
+   "label": "Custom 20-week block: 9 to 12 Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.3.reps",
+   "label": "Custom 20-week block: 9 to 12 Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.3.pct",
+   "label": "Custom 20-week block: 9 to 12 % Of Training Max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.4.sets",
+   "label": "Custom 20-week block: 13 to 16 Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.4.reps",
+   "label": "Custom 20-week block: 13 to 16 Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.4.pct",
+   "label": "Custom 20-week block: 13 to 16 % Of Training Max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.5.sets",
+   "label": "Custom 20-week block: 17 to 20 Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.5.reps",
+   "label": "Custom 20-week block: 17 to 20 Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.block.5.pct",
+   "label": "Custom 20-week block: 17 to 20 % Of Training Max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.a.anchor",
+   "label": "Your anchor lifts: Day A Anchor Lift",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.anchor_region",
+   "label": "Your anchor lifts: Day A Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.anchor",
+   "label": "Your anchor lifts: Day B Anchor Lift",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.anchor_region",
+   "label": "Your anchor lifts: Day B Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.anchor",
+   "label": "Your anchor lifts: Day C Anchor Lift",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.anchor_region",
+   "label": "Your anchor lifts: Day C Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc1.name",
+   "label": "Your accessories: Day A #1 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc1.sets",
+   "label": "Your accessories: Day A #1 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc1.reps",
+   "label": "Your accessories: Day A #1 Reps",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc1.load",
+   "label": "Your accessories: Day A #1 Load",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc1.region",
+   "label": "Your accessories: Day A #1 Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Core",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc2.name",
+   "label": "Your accessories: Day A #2 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc2.sets",
+   "label": "Your accessories: Day A #2 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc2.reps",
+   "label": "Your accessories: Day A #2 Reps",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc2.load",
+   "label": "Your accessories: Day A #2 Load",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc2.region",
+   "label": "Your accessories: Day A #2 Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Core",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc3.name",
+   "label": "Your accessories: Day A #3 Exercise",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc3.sets",
+   "label": "Your accessories: Day A #3 Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc3.reps",
+   "label": "Your accessories: Day A #3 Reps",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc3.load",
+   "label": "Your accessories: Day A #3 Load",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.a.acc3.region",
+   "label": "Your accessories: Day A #3 Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Core",
+    "Full"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc1.name",
+   "label": "Your accessories: Day B #1 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc1.sets",
+   "label": "Your accessories: Day B #1 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc1.reps",
+   "label": "Your accessories: Day B #1 Reps",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc1.load",
+   "label": "Your accessories: Day B #1 Load",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc1.region",
+   "label": "Your accessories: Day B #1 Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Core",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc2.name",
+   "label": "Your accessories: Day B #2 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc2.sets",
+   "label": "Your accessories: Day B #2 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc2.reps",
+   "label": "Your accessories: Day B #2 Reps",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc2.load",
+   "label": "Your accessories: Day B #2 Load",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc2.region",
+   "label": "Your accessories: Day B #2 Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Core",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc3.name",
+   "label": "Your accessories: Day B #3 Exercise",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc3.sets",
+   "label": "Your accessories: Day B #3 Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc3.reps",
+   "label": "Your accessories: Day B #3 Reps",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc3.load",
+   "label": "Your accessories: Day B #3 Load",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.b.acc3.region",
+   "label": "Your accessories: Day B #3 Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Core",
+    "Full"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc1.name",
+   "label": "Your accessories: Day C #1 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc1.sets",
+   "label": "Your accessories: Day C #1 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc1.reps",
+   "label": "Your accessories: Day C #1 Reps",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc1.load",
+   "label": "Your accessories: Day C #1 Load",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc1.region",
+   "label": "Your accessories: Day C #1 Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Core",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc2.name",
+   "label": "Your accessories: Day C #2 Exercise",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc2.sets",
+   "label": "Your accessories: Day C #2 Sets",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc2.reps",
+   "label": "Your accessories: Day C #2 Reps",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc2.load",
+   "label": "Your accessories: Day C #2 Load",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc2.region",
+   "label": "Your accessories: Day C #2 Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Core",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc3.name",
+   "label": "Your accessories: Day C #3 Exercise",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc3.sets",
+   "label": "Your accessories: Day C #3 Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc3.reps",
+   "label": "Your accessories: Day C #3 Reps",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc3.load",
+   "label": "Your accessories: Day C #3 Load",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.c.acc3.region",
+   "label": "Your accessories: Day C #3 Region",
+   "type": "choice",
+   "options": [
+    "Lower",
+    "Upper",
+    "Core",
+    "Full"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "program"
+  },
+  {
+   "key": "str.build_sets",
+   "label": "Build day: sets added",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.yellow.anchor_sets",
+   "label": "Yellow: anchor sets change",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.yellow.load_pct",
+   "label": "Yellow: anchor load",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.yellow.acc_sets",
+   "label": "Yellow: accessory sets change",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.red.sets",
+   "label": "Red: anchor sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.red.reps",
+   "label": "Red: anchor reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.red.pct",
+   "label": "Red: anchor load",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "% max",
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "str.red.acc",
+   "label": "Red: accessories",
+   "type": "choice",
+   "options": [
+    "Remove",
+    "1 set each",
+    "Same"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "advanced"
+  },
+  {
+   "key": "cond.a.name",
+   "label": "Your conditioning: Day A Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.a.amount",
+   "label": "Your conditioning: Day A Amount",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.a.unit",
+   "label": "Your conditioning: Day A Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "yd"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.a.type",
+   "label": "Your conditioning: Day A Type",
+   "type": "choice",
+   "options": [
+    "Run",
+    "Bike",
+    "Other"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.b.name",
+   "label": "Your conditioning: Day B Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.b.amount",
+   "label": "Your conditioning: Day B Amount",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.b.unit",
+   "label": "Your conditioning: Day B Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "yd"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.b.type",
+   "label": "Your conditioning: Day B Type",
+   "type": "choice",
+   "options": [
+    "Run",
+    "Bike",
+    "Other"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.c.name",
+   "label": "Your conditioning: Day C Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.c.amount",
+   "label": "Your conditioning: Day C Amount",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.c.unit",
+   "label": "Your conditioning: Day C Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "yd"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.c.type",
+   "label": "Your conditioning: Day C Type",
+   "type": "choice",
+   "options": [
+    "Run",
+    "Bike",
+    "Other"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.swap.name",
+   "label": "Your conditioning: No-run swap Drill",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.swap.amount",
+   "label": "Your conditioning: No-run swap Amount",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.swap.unit",
+   "label": "Your conditioning: No-run swap Unit",
+   "type": "choice",
+   "options": [
+    "reps",
+    "min",
+    "sec",
+    "yd"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "program"
+  },
+  {
+   "key": "cond.yellow_pct",
+   "label": "Yellow: amount kept",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "07-conditioning",
+   "layer": "advanced"
+  },
+  {
+   "key": "cond.red",
+   "label": "Red day",
+   "type": "choice",
+   "options": [
+    "None",
+    "Half"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "advanced"
+  },
+  {
+   "key": "team.practice_min",
+   "label": "Typical practice length",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": "min",
+   "sheet": "08-games-practices",
+   "layer": "program"
+  },
+  {
+   "key": "team.game_min",
+   "label": "Typical game length",
+   "type": "number",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": "min",
+   "sheet": "08-games-practices",
+   "layer": "program"
+  },
+  {
+   "key": "nutr.cal.off",
+   "label": "Off day calories",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "cal/lb",
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "nutr.cal.lift",
+   "label": "Lift day calories",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "cal/lb",
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "nutr.cal.practice",
+   "label": "Practice day calories",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "cal/lb",
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "nutr.cal.game",
+   "label": "Game day calories",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "cal/lb",
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "nutr.protein",
+   "label": "Protein",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "g/lb",
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "nutr.fat",
+   "label": "Fat",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "g/lb",
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "nutr.miss",
+   "label": "Missed nutrition",
+   "type": "choice",
+   "options": [
+    "Lose nutrition points",
+    "No score impact"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "nutr.minor_deficit",
+   "label": "Deficits under 18",
+   "type": "choice",
+   "options": [
+    "Not allowed",
+    "Only with dietitian and parent"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "nutr.yellow",
+   "label": "Yellow day",
+   "type": "choice",
+   "options": [
+    "Same",
+    "Same, protein first"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "nutr.red",
+   "label": "Red day",
+   "type": "choice",
+   "options": [
+    "Same",
+    "Same, no deficit"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "09-nutrition",
+   "layer": "advanced"
+  },
+  {
+   "key": "sleep.tap1",
+   "label": "Tap 1 = under",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "hrs",
+   "sheet": "10-sleep",
+   "layer": "advanced"
+  },
+  {
+   "key": "sleep.tap2",
+   "label": "Tap 2",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "hrs",
+   "sheet": "10-sleep",
+   "layer": "advanced"
+  },
+  {
+   "key": "sleep.tap3",
+   "label": "Tap 3",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "hrs",
+   "sheet": "10-sleep",
+   "layer": "advanced"
+  },
+  {
+   "key": "sleep.tap4",
+   "label": "Tap 4",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "hrs",
+   "sheet": "10-sleep",
+   "layer": "advanced"
+  },
+  {
+   "key": "sleep.tap5",
+   "label": "Tap 5 = at least",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "hrs",
+   "sheet": "10-sleep",
+   "layer": "advanced"
+  },
+  {
+   "key": "sleep.flag.nights",
+   "label": "Flag after",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "nights",
+   "sheet": "10-sleep",
+   "layer": "advanced"
+  },
+  {
+   "key": "sleep.flag.under",
+   "label": "Flag when under",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "hrs",
+   "sheet": "10-sleep",
+   "layer": "advanced"
+  },
+  {
+   "key": "sleep.flag.action",
+   "label": "Flag action",
+   "type": "choice",
+   "options": [
+    "Coach conversation",
+    "Cap at Yellow",
+    "Both"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "10-sleep",
+   "layer": "advanced"
+  },
+  {
+   "key": "stress.referral",
+   "label": "Serious concerns go to",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "11-outside-stress",
+   "layer": "program"
+  },
+  {
+   "key": "stress.flag.level",
+   "label": "Flag when stress is at or below",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "11-outside-stress",
+   "layer": "advanced"
+  },
+  {
+   "key": "stress.flag.days",
+   "label": "For this many days",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "11-outside-stress",
+   "layer": "advanced"
+  },
+  {
+   "key": "stress.flag.action",
+   "label": "Action",
+   "type": "choice",
+   "options": [
+    "Coach conversation",
+    "Cap at Yellow",
+    "Both"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "11-outside-stress",
+   "layer": "advanced"
+  },
+  {
+   "key": "stress.window_cap",
+   "label": "Known stress windows",
+   "type": "choice",
+   "options": [
+    "Cap at Yellow",
+    "No cap"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "11-outside-stress",
+   "layer": "advanced"
+  },
+  {
+   "key": "body.flag.level",
+   "label": "Flag when soreness is at or below",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "12-body-check",
+   "layer": "advanced"
+  },
+  {
+   "key": "body.flag.days",
+   "label": "For this many days",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "12-body-check",
+   "layer": "advanced"
+  },
+  {
+   "key": "body.flag.action",
+   "label": "Action",
+   "type": "choice",
+   "options": [
+    "Coach check",
+    "Cap at Yellow",
+    "Both"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "12-body-check",
+   "layer": "advanced"
+  },
+  {
+   "key": "avail.lower.action",
+   "label": "Your restrictions: No lower body Action",
+   "type": "choice",
+   "options": [
+    "Remove",
+    "Swap"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.lower.swap",
+   "label": "Your restrictions: No lower body Swap Exercise",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.lower.sets",
+   "label": "Your restrictions: No lower body Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.lower.reps",
+   "label": "Your restrictions: No lower body Reps",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.upper.action",
+   "label": "Your restrictions: No upper body Action",
+   "type": "choice",
+   "options": [
+    "Remove",
+    "Swap"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.upper.swap",
+   "label": "Your restrictions: No upper body Swap Exercise",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.upper.sets",
+   "label": "Your restrictions: No upper body Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.upper.reps",
+   "label": "Your restrictions: No upper body Reps",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.sprint.action",
+   "label": "Your restrictions: No sprinting Action",
+   "type": "choice",
+   "options": [
+    "Remove",
+    "Swap"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.sprint.swap",
+   "label": "Your restrictions: No sprinting Swap Exercise",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.sprint.sets",
+   "label": "Your restrictions: No sprinting Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.sprint.reps",
+   "label": "Your restrictions: No sprinting Reps",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.jump.action",
+   "label": "Your restrictions: No jumping Action",
+   "type": "choice",
+   "options": [
+    "Remove",
+    "Swap"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.jump.swap",
+   "label": "Your restrictions: No jumping Swap Exercise",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.jump.sets",
+   "label": "Your restrictions: No jumping Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.jump.reps",
+   "label": "Your restrictions: No jumping Reps",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.contact.action",
+   "label": "Your restrictions: No contact Action",
+   "type": "choice",
+   "options": [
+    "Remove",
+    "Swap"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.contact.swap",
+   "label": "Your restrictions: No contact Swap Exercise",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.contact.sets",
+   "label": "Your restrictions: No contact Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.contact.reps",
+   "label": "Your restrictions: No contact Reps",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "program"
+  },
+  {
+   "key": "avail.rtt.start_pct",
+   "label": "Return start load",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "% max",
+   "sheet": "13-availability",
+   "layer": "advanced"
+  },
+  {
+   "key": "avail.rtt.step_pct",
+   "label": "Return weekly step",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "%",
+   "sheet": "13-availability",
+   "layer": "advanced"
+  },
+  {
+   "key": "avail.out_plan",
+   "label": "Out plan",
+   "type": "choice",
+   "options": [
+    "Core 4 + rehab",
+    "Rehab only",
+    "Core 4 only"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "advanced"
+  },
+  {
+   "key": "avail.clear_by",
+   "label": "Who clears",
+   "type": "choice",
+   "options": [
+    "Athletic trainer",
+    "Medical provider",
+    "Either"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.off.start",
+   "label": "Your phase dates: Off-season Start Date (Mm/Dd)",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.pre.start",
+   "label": "Your phase dates: Preseason Start Date (Mm/Dd)",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.in.start",
+   "label": "Your phase dates: In-season Start Date (Mm/Dd)",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.post.start",
+   "label": "Your phase dates: Postseason Start Date (Mm/Dd)",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.off.week.mon",
+   "label": "Your week for each phase: Off-season Mon",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.off.week.tue",
+   "label": "Your week for each phase: Off-season Tue",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.off.week.wed",
+   "label": "Your week for each phase: Off-season Wed",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.off.week.thu",
+   "label": "Your week for each phase: Off-season Thu",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.off.week.fri",
+   "label": "Your week for each phase: Off-season Fri",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.off.week.sat",
+   "label": "Your week for each phase: Off-season Sat",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.off.week.sun",
+   "label": "Your week for each phase: Off-season Sun",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.pre.week.mon",
+   "label": "Your week for each phase: Preseason Mon",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.pre.week.tue",
+   "label": "Your week for each phase: Preseason Tue",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.pre.week.wed",
+   "label": "Your week for each phase: Preseason Wed",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.pre.week.thu",
+   "label": "Your week for each phase: Preseason Thu",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.pre.week.fri",
+   "label": "Your week for each phase: Preseason Fri",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.pre.week.sat",
+   "label": "Your week for each phase: Preseason Sat",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.pre.week.sun",
+   "label": "Your week for each phase: Preseason Sun",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.in.week.mon",
+   "label": "Your week for each phase: In-season Mon",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.in.week.tue",
+   "label": "Your week for each phase: In-season Tue",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.in.week.wed",
+   "label": "Your week for each phase: In-season Wed",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.in.week.thu",
+   "label": "Your week for each phase: In-season Thu",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.in.week.fri",
+   "label": "Your week for each phase: In-season Fri",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.in.week.sat",
+   "label": "Your week for each phase: In-season Sat",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.in.week.sun",
+   "label": "Your week for each phase: In-season Sun",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.post.week.mon",
+   "label": "Your week for each phase: Postseason Mon",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.post.week.tue",
+   "label": "Your week for each phase: Postseason Tue",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.post.week.wed",
+   "label": "Your week for each phase: Postseason Wed",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.post.week.thu",
+   "label": "Your week for each phase: Postseason Thu",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.post.week.fri",
+   "label": "Your week for each phase: Postseason Fri",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.post.week.sat",
+   "label": "Your week for each phase: Postseason Sat",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.post.week.sun",
+   "label": "Your week for each phase: Postseason Sun",
+   "type": "choice",
+   "options": [
+    "Lift",
+    "Practice",
+    "Game",
+    "Off"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "program"
+  },
+  {
+   "key": "phase.off.acc_sets",
+   "label": "Phase dose: Off-season Acc Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.off.speed_add",
+   "label": "Phase dose: Off-season Speed +/- Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.off.cond_pct",
+   "label": "Phase dose: Off-season Cond %",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.off.build",
+   "label": "Phase dose: Off-season Build Days",
+   "type": "choice",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.pre.anchor_sets",
+   "label": "Phase dose: Preseason Anchor Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.pre.anchor_reps",
+   "label": "Phase dose: Preseason Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.pre.anchor_pct",
+   "label": "Phase dose: Preseason % Max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.pre.acc_sets",
+   "label": "Phase dose: Preseason Acc Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.pre.speed_add",
+   "label": "Phase dose: Preseason Speed +/- Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.pre.cond_pct",
+   "label": "Phase dose: Preseason Cond %",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.pre.build",
+   "label": "Phase dose: Preseason Build Days",
+   "type": "choice",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.in.anchor_sets",
+   "label": "Phase dose: In-season Anchor Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.in.anchor_reps",
+   "label": "Phase dose: In-season Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.in.anchor_pct",
+   "label": "Phase dose: In-season % Max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.in.acc_sets",
+   "label": "Phase dose: In-season Acc Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.in.speed_add",
+   "label": "Phase dose: In-season Speed +/- Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.in.cond_pct",
+   "label": "Phase dose: In-season Cond %",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.in.build",
+   "label": "Phase dose: In-season Build Days",
+   "type": "choice",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.post.anchor_sets",
+   "label": "Phase dose: Postseason Anchor Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.post.anchor_reps",
+   "label": "Phase dose: Postseason Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.post.anchor_pct",
+   "label": "Phase dose: Postseason % Max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.post.acc_sets",
+   "label": "Phase dose: Postseason Acc Sets",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.post.speed_add",
+   "label": "Phase dose: Postseason Speed +/- Reps",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.post.cond_pct",
+   "label": "Phase dose: Postseason Cond %",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "phase.post.build",
+   "label": "Phase dose: Postseason Build Days",
+   "type": "choice",
+   "options": [
+    "Yes",
+    "No"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "advanced"
+  },
+  {
+   "key": "profile.req.position",
+   "label": "Required on every intake: Position Required",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "program"
+  },
+  {
+   "key": "profile.req.grade",
+   "label": "Required on every intake: Grade or age Required",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "program"
+  },
+  {
+   "key": "profile.req.bodyweight",
+   "label": "Required on every intake: Bodyweight Required",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "program"
+  },
+  {
+   "key": "profile.req.training_age",
+   "label": "Required on every intake: Training age Required",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "program"
+  },
+  {
+   "key": "profile.req.injury",
+   "label": "Required on every intake: Injury history (12 months) Required",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "program"
+  },
+  {
+   "key": "profile.req.parent",
+   "label": "Required on every intake: Parent or guardian contact (under 18) Required",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "program"
+  },
+  {
+   "key": "profile.new_years",
+   "label": "New lifter: up to",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "years",
+   "sheet": "15-profile-rules",
+   "layer": "advanced"
+  },
+  {
+   "key": "profile.adv_years",
+   "label": "Advanced from",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "years",
+   "sheet": "15-profile-rules",
+   "layer": "advanced"
+  },
+  {
+   "key": "ath.name",
+   "label": "Name",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.sport",
+   "label": "Primary sport",
+   "type": "text",
+   "options": null,
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.sport2",
+   "label": "Second sport",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.position",
+   "label": "Position",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.grade",
+   "label": "Grade",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.birth_year",
+   "label": "Birth year",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.bodyweight",
+   "label": "Bodyweight",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "lb",
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.training_age",
+   "label": "Years of training",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "years",
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.max.a",
+   "label": "Day A anchor max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "lb",
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.max.b",
+   "label": "Day B anchor max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "lb",
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.max.c",
+   "label": "Day C anchor max",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": "lb",
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.test_baseline",
+   "label": "Weekly test baseline",
+   "type": "number",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.status",
+   "label": "Status",
+   "type": "choice",
+   "options": [
+    "Full",
+    "Modified",
+    "Out"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.r.lower",
+   "label": "No lower body",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.r.upper",
+   "label": "No upper body",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.r.sprint",
+   "label": "No sprinting",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.r.jump",
+   "label": "No jumping",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.r.contact",
+   "label": "No contact",
+   "type": "check",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.injury",
+   "label": "Injury history (12 months)",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.parent.name",
+   "label": "Parent or guardian",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "ath.parent.contact",
+   "label": "Parent phone or email",
+   "type": "text",
+   "options": null,
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "17-athlete-intake",
+   "layer": "program"
+  },
+  {
+   "key": "dec.score.caution",
+   "label": "How cautious are you with a tired athlete?",
+   "type": "decision",
+   "options": [
+    "Protect them",
+    "Balanced (STS)",
+    "Push them"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.score.one_night",
+   "label": "How much should one bad night count?",
+   "type": "decision",
+   "options": [
+    "A lot",
+    "Balanced (STS)",
+    "Very little"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.score.priority",
+   "label": "What matters most in the check-in?",
+   "type": "decision",
+   "options": [
+    "Balanced (STS)",
+    "Sleep first",
+    "Body first",
+    "Life stress first"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.score.load_memory",
+   "label": "How far back should the app look at training load?",
+   "type": "decision",
+   "options": [
+    "Short memory",
+    "Standard (STS)",
+    "Long memory"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.score.load_jump",
+   "label": "When training load jumps fast, you...",
+   "type": "decision",
+   "options": [
+    "Pull back hard",
+    "Pull back (STS)",
+    "Only flag it"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.score.light",
+   "label": "A fresh athlete who has been under-loaded...",
+   "type": "decision",
+   "options": [
+    "Gets more work (STS)",
+    "Keeps the plan"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "01-scoring-zones",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.test.sensitivity",
+   "label": "How much should a drop in the weekly test affect the day?",
+   "type": "decision",
+   "options": [
+    "Big deal",
+    "Balanced (STS)",
+    "Small deal",
+    "Track only"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.test.baseline",
+   "label": "Compare each test to the athlete's last...",
+   "type": "decision",
+   "options": [
+    "2 weeks",
+    "Month (STS)",
+    "2 months"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.test.retest",
+   "label": "Re-test anchor maxes every...",
+   "type": "decision",
+   "options": [
+    "4 weeks (STS)",
+    "6 weeks",
+    "8 weeks"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.test.tired",
+   "label": "On Yellow and Red days, testing...",
+   "type": "decision",
+   "options": [
+    "Always runs",
+    "Protects (STS)",
+    "Stops"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.test.bar",
+   "label": "Do you track bar speed every session?",
+   "type": "decision",
+   "options": [
+    "No (STS)",
+    "Yes"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "02-testing",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.core4.red",
+   "label": "On a Red day, prep...",
+   "type": "decision",
+   "options": [
+    "Stays the same (STS)",
+    "Gets shorter"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "03-core-4",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.skill.order",
+   "label": "Which comes first after Core 4?",
+   "type": "decision",
+   "options": [
+    "Skill (STS)",
+    "Speed"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.skill.tired",
+   "label": "On tired days, skill work...",
+   "type": "decision",
+   "options": [
+    "Stays mostly",
+    "Scales down (STS)",
+    "Cuts hard"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.skill.gameday",
+   "label": "The game day skill primer is...",
+   "type": "decision",
+   "options": [
+    "Light",
+    "Moderate (STS)",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "04-sport-skill",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.speed.tired",
+   "label": "On tired days, speed work...",
+   "type": "decision",
+   "options": [
+    "Protects quality (STS)",
+    "Keeps sprinting",
+    "Stops"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "05-speed",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.str.block",
+   "label": "How does the anchor progress across the off-season?",
+   "type": "decision",
+   "options": [
+    "Volume first (STS)",
+    "Steady",
+    "Intensity first",
+    "Custom"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.str.tired",
+   "label": "On tired days, the anchor lift...",
+   "type": "decision",
+   "options": [
+    "Protects",
+    "Balanced (STS)",
+    "Keeps lifting"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.str.build",
+   "label": "On a Build day, add...",
+   "type": "decision",
+   "options": [
+    "1 set (STS)",
+    "2 sets",
+    "Nothing"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "06-strength",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.cond.practice",
+   "label": "On practice days, extra conditioning is...",
+   "type": "decision",
+   "options": [
+    "None (STS)",
+    "Half",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.cond.pregame",
+   "label": "The day before a game, conditioning is...",
+   "type": "decision",
+   "options": [
+    "None (STS)",
+    "Half",
+    "Full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.cond.tired",
+   "label": "On tired days, conditioning...",
+   "type": "decision",
+   "options": [
+    "Scales down (STS)",
+    "Mostly stays",
+    "Stops"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "07-conditioning",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.team.load",
+   "label": "Who rates how hard practice was?",
+   "type": "decision",
+   "options": [
+    "Athlete (STS)",
+    "Coach"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "08-games-practices",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.team.practice_day",
+   "label": "On practice days, the weight room does...",
+   "type": "decision",
+   "options": [
+    "Prep, skill, short speed (STS)",
+    "Prep, skill, light lift",
+    "Prep and skill only"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "08-games-practices",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.team.gameday",
+   "label": "On game day, the athlete does...",
+   "type": "decision",
+   "options": [
+    "Prep + skill primer (STS)",
+    "Prep only",
+    "Nothing"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "08-games-practices",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.team.postgame",
+   "label": "The day after a game is...",
+   "type": "decision",
+   "options": [
+    "Never Green (STS)",
+    "Recovery only",
+    "Score decides"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "08-games-practices",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.nutr.fuel",
+   "label": "How hard do you push fueling?",
+   "type": "decision",
+   "options": [
+    "Maintain",
+    "Perform (STS)",
+    "Gain"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "09-nutrition",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.nutr.protein",
+   "label": "Protein target",
+   "type": "decision",
+   "options": [
+    "Standard",
+    "High (STS)",
+    "Very high"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "09-nutrition",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.nutr.miss",
+   "label": "Missed nutrition yesterday...",
+   "type": "decision",
+   "options": [
+    "Counts (STS)",
+    "Tracked only"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "09-nutrition",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.nutr.minor",
+   "label": "Calorie deficits for athletes under 18...",
+   "type": "decision",
+   "options": [
+    "Never (STS)",
+    "With a dietitian"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "09-nutrition",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.nutr.tired",
+   "label": "On Yellow and Red days, nutrition...",
+   "type": "decision",
+   "options": [
+    "Same targets",
+    "Protect recovery (STS)"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "09-nutrition",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.sleep.standard",
+   "label": "Your sleep goal for athletes is...",
+   "type": "decision",
+   "options": [
+    "7+ hours",
+    "8+ hours (STS)",
+    "9+ hours"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "10-sleep",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.sleep.flag",
+   "label": "When an athlete keeps sleeping short...",
+   "type": "decision",
+   "options": [
+    "Talk to them (STS)",
+    "Talk and hold back",
+    "Catch it early"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "10-sleep",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.stress.flag",
+   "label": "When stress stays high...",
+   "type": "decision",
+   "options": [
+    "Talk after 2 days (STS)",
+    "Talk right away",
+    "Talk and hold back"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "11-outside-stress",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.stress.window",
+   "label": "During exam weeks and travel...",
+   "type": "decision",
+   "options": [
+    "Never Green (STS)",
+    "Score decides"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "11-outside-stress",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.body.flag",
+   "label": "When soreness stays high...",
+   "type": "decision",
+   "options": [
+    "Check after 3 days (STS)",
+    "Check after 2 days",
+    "Check and hold back"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "12-body-check",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.body.pain",
+   "label": "Pain (sharp, joint, one side) goes to...",
+   "type": "decision",
+   "options": [
+    "Athletic trainer (STS)",
+    "Head coach"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "12-body-check",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.body.location",
+   "label": "Should athletes tap where they are sore?",
+   "type": "decision",
+   "options": [
+    "No (STS)",
+    "Yes"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "12-body-check",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.avail.out",
+   "label": "An athlete who is Out does...",
+   "type": "decision",
+   "options": [
+    "Prep + rehab (STS)",
+    "Rehab only",
+    "Prep only"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.avail.clear",
+   "label": "Who can clear an athlete to train?",
+   "type": "decision",
+   "options": [
+    "Either (STS)",
+    "Athletic trainer",
+    "Medical provider"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.avail.return",
+   "label": "After an injury, the anchor lift comes back...",
+   "type": "decision",
+   "options": [
+    "Slowly",
+    "Steadily (STS)",
+    "Quickly"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "13-availability",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.phase.off",
+   "label": "The off-season is for...",
+   "type": "decision",
+   "options": [
+    "Building everything (STS)",
+    "Strength first"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.phase.pre",
+   "label": "The preseason is for...",
+   "type": "decision",
+   "options": [
+    "Getting sport-ready (STS)",
+    "Holding strength",
+    "Conditioning push"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.phase.in",
+   "label": "In-season lifting is...",
+   "type": "decision",
+   "options": [
+    "Heavy, low volume (STS)",
+    "Moderate",
+    "Minimal"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.phase.post",
+   "label": "The postseason is...",
+   "type": "decision",
+   "options": [
+    "Off the bar (STS)",
+    "Light lifting"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.phase.transition",
+   "label": "The first week of a new phase...",
+   "type": "decision",
+   "options": [
+    "Eases in (STS)",
+    "Starts full"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.phase.multisport",
+   "label": "A multi-sport athlete follows...",
+   "type": "decision",
+   "options": [
+    "In-season sport (STS)",
+    "Primary sport"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "14-season-phase",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.profile.levels",
+   "label": "Who counts as a new lifter?",
+   "type": "decision",
+   "options": [
+    "Under 1 year (STS)",
+    "Under 2 years"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.profile.new_plan",
+   "label": "A new lifter starts with...",
+   "type": "decision",
+   "options": [
+    "Technique first (STS)",
+    "Full plan, light"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.profile.build",
+   "label": "Build days are for...",
+   "type": "decision",
+   "options": [
+    "Everyone past new (STS)",
+    "Advanced only",
+    "No one"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.profile.no_max",
+   "label": "An athlete with no tested max lifts...",
+   "type": "decision",
+   "options": [
+    "Technique weights (STS)",
+    "Coach sets load"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.profile.bw",
+   "label": "Bodyweight gets updated...",
+   "type": "decision",
+   "options": [
+    "Weekly",
+    "Monthly (STS)",
+    "Each test day"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "15-profile-rules",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.override.who",
+   "label": "Who can override an athlete's zone?",
+   "type": "decision",
+   "options": [
+    "Head coach only",
+    "Head coach + AT (STS)",
+    "Any coach"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "16-coach-override",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.override.up",
+   "label": "Moving an athlete up a zone...",
+   "type": "decision",
+   "options": [
+    "Needs a reason (STS)",
+    "No reason needed"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "16-coach-override",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.override.red",
+   "label": "When an athlete is Red, the coach hears...",
+   "type": "decision",
+   "options": [
+    "Same day (STS)",
+    "Next morning"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "16-coach-override",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.override.yellow",
+   "label": "An athlete stuck in Yellow gets a conversation after...",
+   "type": "decision",
+   "options": [
+    "2 days",
+    "3 days (STS)",
+    "5 days"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "16-coach-override",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.override.sport",
+   "label": "Sport coaches get...",
+   "type": "decision",
+   "options": [
+    "Daily summary",
+    "Weekly summary (STS)",
+    "Nothing"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "16-coach-override",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.override.parent",
+   "label": "Parents get a report...",
+   "type": "decision",
+   "options": [
+    "Weekly",
+    "Monthly (STS)",
+    "Never"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "16-coach-override",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.override.owner",
+   "label": "The owner gets a report...",
+   "type": "decision",
+   "options": [
+    "Weekly",
+    "Monthly (STS)",
+    "Never"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "16-coach-override",
+   "layer": "decision"
+  },
+  {
+   "key": "dec.override.athlete",
+   "label": "Athletes see...",
+   "type": "decision",
+   "options": [
+    "Score + plan (STS)",
+    "Score + plan + reason"
+   ],
+   "required": true,
+   "example": null,
+   "unit": null,
+   "sheet": "16-coach-override",
+   "layer": "decision"
+  }
+ ]
+}
