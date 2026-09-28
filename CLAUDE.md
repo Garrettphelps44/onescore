@@ -7,10 +7,10 @@
 **Who's building:** Garrett (Architect) is a strength coach, not a professional developer. Explain in plain language. When a step needs him, tell him exactly what to click or paste.
 
 ## Current Status
-- **Phase:** V done (Supabase deferred). **L3 Engine approved early**, before A — not started.
-- **Last session:** 2026-09-28 — Kickoff, V scaffold (React + Vite + TS, Vitest, supabase-js, git → github.com/Garrettphelps44/onescore), Setup moved from PDFs into the app, V sealed.
-- **Next:** L3 Module Prompt (list behaviors, stop for cuts), then build `src/engine/`. After L3: Phase A, starting with creating Supabase `one-score-dev`.
-- **Broken / deferred:** Supabase project not created (A step 0). `src/lib/supabase.ts` throws if imported without `.env.local` — nothing imports it yet.
+- **Phase:** V done (Supabase deferred). **L3 Engine built early — 37 tests pass**, not yet sealed/reviewed by Garrett.
+- **Last session:** 2026-09-28 — Kickoff, V, Setup moved in-app, L3 engine in `src/engine/` (score, plan, load, nutrition, dates, strict rule lookups) + tests incl. Two Coaches. New Setup question `team.practice_letter` added to `field-map.json`.
+- **Next:** Garrett reviews L3 → Seal L3 (tick checkbox). Then Phase A, starting with creating Supabase `one-score-dev`.
+- **Broken / deferred:** Supabase project not created (A step 0). New-lifter technique dose 3 × 5 is hard-coded from docs/04 §7 (`NEW_LIFTER_ANCHOR` in `src/engine/plan.ts`) — should become a Setup answer. Swap-action fields (`avail.<tag>.swap/sets/reps`) should be required in Setup validation when action = Swap.
 
 _Update this block with the Seal Prompt at the end of every session._
 

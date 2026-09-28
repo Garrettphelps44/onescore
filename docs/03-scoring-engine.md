@@ -56,7 +56,7 @@ Days without a log count as 0.
 "Cap at X" means: if the zone is better than X, set it to X. "Drop one zone": Green→Yellow, Yellow→Red, Red stays Red.
 
 ## 7. Coach flags (for the board, not the athlete)
-Red today · Yellow streak ≥ `override.yellow_streak` · sleep/stress/soreness flags · A:C flag · missed check-in · status Modified/Out.
+Red today · Yellow or Red on a game day (`game_day_zone`) · Yellow streak ≥ `override.yellow_streak` · sleep/stress/soreness flags · A:C flag · missed check-in · status Modified/Out.
 
 ## 8. Reason
 One line for the coach view (and the athlete only if `override.athlete_sees` = Score + plan + reason). Lead with the modifier that changed the zone, else the two lowest taps. Wording pattern: see `reason()` in the prototype.

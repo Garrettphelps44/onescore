@@ -43,6 +43,7 @@ Layer 1 philosophy questions from the PDFs are not in the app.
 - Score weights (if any advanced weight is filled) must all be filled and total 100.
 - `score.yellow_min` < `score.green_min`.
 - Sport 1 on Sport Skill filled; every sport with a name has 3 drills.
+- `team.practice_letter` required when `team.practice_strength` = Reduced or `cond.practice` ≠ None.
 - Anchor for Day A required. Day B / C required if the week template for any phase has 2 / 3 Lift days.
 - Every phase has a start date (MM/DD) and all 7 week days.
 - `profile.new_years` < `profile.adv_years`.

@@ -133,6 +133,8 @@ Pilot (one facility, 10 athletes, 2 weeks, 80%+ check-in rate, under 30-second c
 ## Decisions Log
 _Newest on top. Date — decision — why._
 
+- **2026-09-28 — L3 build answers.** (1) Engine tests use a test-only sample program from the Draft's example (Back Squat / Bench / Trap Bar, Football drills, Draft Core 4) — never in app code. (2) New Setup question `team.practice_letter` (Games & Practices): practice-day light lift / extra conditioning uses **Day A** or the **Next lift day**. Required only when practice strength = Reduced or practice conditioning ≠ None. (3) Game-day sport skill uses `skill.game_pct` only, whatever the zone; a Yellow/Red athlete on a game day gets a coach flag (`game_day_zone`).
+
 - **2026-09-28 — L3 Engine built early, before A; Supabase deferred.** Garrett isn't creating a Supabase project yet. V closes without it; creating `one-score-dev` becomes step 0 of A. L3 is pure functions + tests with no database, no screens, and no dependency on the schema, so it can be built out of order without risk. Exception to "no skipping ahead" — only L3; A → U → L1, L2, L4… still run in order. L3's module checkbox stays open until its tests pass.
 
 - **2026-09-28 — Setup moves into the app; PDFs dropped.** The coach answers every question in the app, start to finish, instead of filling 16 PDFs. The Setup screen is generated from `field-map.json`, saves as they go (`rules_drafts`), and shows errors on the question itself. Athlete intake is the roster form. Layer 1 philosophy questions are skipped (the engine never used them). `pdfjs-dist` removed. Why: one place to finish, no file handling, errors where the coach can fix them. Engine, rules shape, and every other module unchanged. Supersedes kickoff answer 7.

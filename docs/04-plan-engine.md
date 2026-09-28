@@ -10,6 +10,7 @@ Reference implementation: `plan()` in `_reference/index.html` (hard-coded there 
 - **Phase:** the phase whose `phase.<p>.start` (MM/DD) is the most recent on or before `date` (wrap across the year).
 - **Day type:** `phase.<p>.week.<mon..sun>` → Lift / Practice / Game / Off.
 - **Lift letter:** count Lift days earlier in the same week (Mon start) → 0 = A, 1 = B, 2 = C (4th+ wraps to A).
+- **Practice-day letter** (for a Reduced lift or practice conditioning): `team.practice_letter` = Day A → A; Next lift day → the letter of the next Lift day in the week template (wrapping into next week; if the phase has no Lift days, A).
 - **Week of phase:** `floor((date − phase start) / 7) + 1`. **Transition week** = week 1 and `phase.transition` = One step lower → −1 set on anchor and accessories (minimum 1).
 
 ## 2. Status first
@@ -31,7 +32,7 @@ Items `core4.1–4`: name, sets × dose. Red + `core4.red` = 1 set each → sets
 
 ## 5. Sport skill
 Sport = `ath.sport`. Phases are facility-wide in v1, so both `phase.multisport` options resolve to `ath.sport`. Drills = `skill.sN.d1–3` for the matching `skill.sN.sport`. Amount scaling:
-- Yellow × `skill.yellow_pct`% · Red: `skill.red_mode` Remove block, or Technique reps × `skill.red_pct`% (prefix "Technique: ") · Game day × `skill.game_pct`%.
+- Yellow × `skill.yellow_pct`% · Red: `skill.red_mode` Remove block, or Technique reps × `skill.red_pct`% (prefix "Technique: ") · Game day × `skill.game_pct`% only — zone scaling is not applied on game days; Yellow/Red on a game day adds coach flag `game_day_zone`.
 Round up. Contact-tagged drills removed under a No contact restriction.
 
 ## 6. Speed

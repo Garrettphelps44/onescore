@@ -4466,6 +4466,20 @@
    "layer": "program"
   },
   {
+   "key": "team.practice_letter",
+   "label": "On practice days, a light lift or extra conditioning uses which lift day's plan?",
+   "type": "choice",
+   "options": [
+    "Day A",
+    "Next lift day"
+   ],
+   "required": false,
+   "example": null,
+   "unit": null,
+   "sheet": "08-games-practices",
+   "layer": "program"
+  },
+  {
    "key": "nutr.cal.off",
    "label": "Off day calories",
    "type": "number",
