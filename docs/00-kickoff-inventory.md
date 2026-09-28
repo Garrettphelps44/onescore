@@ -1,12 +1,12 @@
 # Kickoff Inventory
 
-Back to `CLAUDE.md` · Output of the Kickoff Prompt, 2026-09-28 · Decisions from it are logged in `VAULT-PLAN.md`
+Back to `CLAUDE.md` · Output of the Kickoff Prompt, 2026-09-28 · Decisions from it are logged in `VAULT-PLAN.md` · Updated same day: Setup moved from PDFs into the app
 
 ## Modules
 | # | Module | Scope |
 |---|---|---|
-| L1 | Rules Import | Upload 16 PDFs → decisions (60, 25 set-only keys) → program → advanced overrides → validate → `rules_versions` (+ `raw`) → diff |
-| L2 | Roster & Intake | Add/edit/deactivate, Intake PDF (21 fields, `birth_year` not age), `profile.req.*` required fields, consent on roster, invite |
+| L1 | Rules Setup | In-app questionnaire generated from `field-map.json` → `rules_drafts` → Finish: decisions (60, 25 set-only keys) → program → advanced overrides → validate → `rules_versions` (+ `answers`) → diff |
+| L2 | Roster & Intake | Add/edit/deactivate via roster form (21 `ath.*` fields, `birth_year` not age), `profile.req.*` required fields, consent on roster, invite |
 | L3 | Engine | `scoreDay` + `planDay` + load formula. Pure TS, tests 7–21 in `06-vault-check-and-tests.md` |
 | L4 | Athlete Today | Check-in, number-only slab, collapsible blocks, Save session, nutrition entry, PWA |
 | L5 | Availability | Full/Modified/Out + restrictions → `status_log` + `audit_log`, return-to-train, same-day rebuild |

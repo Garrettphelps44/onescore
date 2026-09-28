@@ -6,7 +6,7 @@ Back to `CLAUDE.md` · Specs: `docs/02-rules-contract.md`, `docs/03-scoring-engi
 - [ ] Log in as Tenant B. Walk every screen — any trace of Tenant A's data is a bug.
 - [ ] Try to query another tenant's records directly, bypassing the UI. Should return empty.
 - [ ] Log in as an Athlete. Try to reach an Operator screen by URL. Should be blocked.
-- [ ] Log in as an Operator. Try to reach Settings, Import, and Billing by URL and by direct query. Should be blocked.
+- [ ] Log in as an Operator. Try to reach Settings, Setup, and Billing by URL and by direct query. Should be blocked.
 - [ ] Open a share link logged out, in a private window. Exactly one athlete's report, nothing else reachable.
 - [ ] Let a share token expire. Confirm it stops working.
 - [ ] Set a tenant's `subscription_status` to `canceled`. Confirm data access stops at the database.
@@ -16,13 +16,13 @@ Back to `CLAUDE.md` · Specs: `docs/02-rules-contract.md`, `docs/03-scoring-engi
 ## Isolation Lock test (automated — rerun every schema change)
 Two dummy tenants, one Owner + one Operator + one Athlete each. For every table, each user attempts to read and write the other tenant's rows → 0 rows / denied.
 
-## Rules import tests
-1. **Blank sheet fails clearly.** Blank Scoring sheet → errors include "How cautious are you with a tired athlete?". Nothing saved.
-2. **Full set passes.** All 16 sheets filled with STS answers → 0 errors, version 1 saved.
+## Rules Setup tests
+1. **Blank section fails clearly.** Scoring & Zones left blank → Finish marks "How cautious are you with a tired athlete?". No version saved.
+2. **Full set passes.** All 16 sections answered with STS answers → 0 errors, version 1 saved.
 3. **Advanced overrides decision.** STS answers + advanced `score.green_min` = 82 → rules.green_min = 82, yellow_min = 55.
-4. **Custom block requires the table.** Strength block = Custom with empty block table → error; filled → imports.
+4. **Custom block requires the table.** Strength block = Custom with empty block table → error; filled → saves.
 5. **Weights must total 100.** Advanced weights filled summing to 90 → error.
-6. **Intake sport must exist.** Athlete sport "Lacrosse" not on Sport Skill → error naming the athlete.
+6. **Roster sport must exist.** Roster form with sport "Lacrosse" not on Sport Skill → error on the sport field.
 
 ## Engine tests — scoring (rulesSTS)
 7. **All 4s, no history, nutrition hit** → readiness 77.5 → score 78 → Green.

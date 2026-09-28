@@ -6,7 +6,7 @@ Back to `CLAUDE.md` · Phase A and U in `VAULT-PLAN.md` · Checked by `docs/06-v
 | Role | Who in One Score | Sees | Can |
 |---|---|---|---|
 | **Architect** | Garrett / STS | Every tenant. Lives outside the tenant model (`architects` table). | Create, suspend, comp, support tenants. Fill Layer 4 during installs. |
-| **Owner** | Facility owner or head coach | Everything in their tenant | Import sheets, roster, invites, branding, billing, settings, everything an Operator can do |
+| **Owner** | Facility owner or head coach | Everything in their tenant | Complete Setup, roster, invites, branding, billing, settings, everything an Operator can do |
 | **Operator** | Coaches, athletic trainers (`title`) | Every athlete in their tenant | Board, athlete detail, status/restrictions, overrides (per `override.who`), stress windows, practice intensity |
 | **Athlete** | The athlete | Only their own record | Check in, see score + plan, log sessions and nutrition |
 
@@ -26,7 +26,8 @@ Roles are enforced in RLS. Never by hiding a button.
 ## One Score domain tables (every one carries `tenant_id`)
 | Table | Columns (key ones) | Notes |
 |---|---|---|
-| `rules_versions` | id, tenant_id, version, rules jsonb, raw jsonb, philosophy jsonb, meta jsonb, imported_by, imported_at | Latest = active. `rules` is resolved key→value from the sheets; it is config, not user data, so jsonb is right here. |
+| `rules_drafts` | tenant_id (one per tenant), answers jsonb, updated_by, updated_at | Setup in progress. Owner-only read/write. |
+| `rules_versions` | id, tenant_id, version, rules jsonb, answers jsonb, meta jsonb, imported_by, imported_at | Latest = active. Written on Setup Finish. `rules` is resolved key→value from the answers; it is config, not user data, so jsonb is right here. |
 | `athletes` | id, tenant_id, user_id (null until invite accepted), name, sport, sport2, position, grade, birth_year, bodyweight, training_age, max_a, max_b, max_c, test_baseline, status (`full`,`modified`,`out`), status_changed_at, injury, parent_name, parent_contact, parent_consent_at, active | Real columns, not a blob |
 | `athlete_restrictions` | tenant_id, athlete_id, restriction (`lower`,`upper`,`sprint`,`jump`,`contact`) | One row per active restriction |
 | `checkins` | id, tenant_id, athlete_id, date, sleep_hours, sleep_quality, soreness, stress, energy (1–5), nutrition_hit, test_value | unique (athlete_id, date) |
@@ -44,7 +45,7 @@ Dates are the tenant's local date (`tenants.timezone`).
 - Helper functions: `is_architect()`, `member_role(tenant_id)`, `my_athlete_id(tenant_id)`.
 - **Architect:** read/write all.
 - **Owner:** read/write rows where `tenant_id` = their tenant.
-- **Operator:** read all athlete data in their tenant; write `athletes` (status only), `athlete_restrictions`, `overrides` (if allowed by the tenant's `override.who` + their `title`), `stress_windows`, `team_intensity`, `status_log`. No `tenant_branding`, `invites`, `rules_versions` writes, no billing.
+- **Operator:** read all athlete data in their tenant; write `athletes` (status only), `athlete_restrictions`, `overrides` (if allowed by the tenant's `override.who` + their `title`), `stress_windows`, `team_intensity`, `status_log`. No `tenant_branding`, `invites`, `rules_drafts`, `rules_versions` writes, no billing.
 - **Athlete:** read/write only their own `checkins`, `sessions`, `nutrition_logs`; read only their own `athletes` row and `daily_results`; read the active `rules_versions` of their tenant (engine needs it). Nothing else.
 - **Subscription gate (phase T):** every domain policy also requires `tenants.subscription_status` in (`active`,`trialing`,`comped`).
 - **Share links:** a public Edge Function takes a token, checks `share_tokens` (not expired), returns exactly one athlete's report. Tokens never grant table access.
@@ -54,7 +55,7 @@ Dates are the tenant's local date (`tenants.timezone`).
 - Signup → creates `tenants` row + `tenant_members` row with role `owner` (one transaction, Edge Function).
 - Invites → email with token link, expires (default 7 days). Accepting links the user to the tenant, role, and (for athletes) `athletes.user_id`.
 - Minors: athlete invite can go to a parent's email; the parent sets the password with the athlete. See `docs/07-privacy.md`.
-- Every sign-in-sensitive action writes `audit_log` (role change, invite, status change, override, rules import, share link created).
+- Every sign-in-sensitive action writes `audit_log` (role change, invite, status change, override, rules Setup finished, share link created).
 
 ## Secrets
 Stripe secret key, service role key, email provider key → Edge Function environment only. Browser code gets the Supabase URL and anon key, nothing else.

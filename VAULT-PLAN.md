@@ -2,7 +2,7 @@
 
 The Draft (`_reference/index.html`) → a Vault, through **V · A · U · L · T**. In order. No skipping ahead — a Vault built out of order is a Draft with extra steps.
 
-**Total:** ~40–70 hours. At 5–6 protected hours a week, roughly 8–12 weeks. Layer runs long on this one: the rules import and the engine are the product.
+**Total:** ~40–70 hours. At 5–6 protected hours a week, roughly 8–12 weeks. Layer runs long on this one: Setup and the engine are the product.
 
 **How every session runs:** Reopen Prompt → one Phase or Module Prompt → approve the list → build → Seal Prompt. Prompts are at the bottom.
 
@@ -13,7 +13,7 @@ The Draft (`_reference/index.html`) → a Vault, through **V · A · U · L · T
 - [ ] **A** — Architect
 - [ ] **U** — Unlock
 - [ ] **L** — Layer
-  - [ ] L1 Rules Import
+  - [ ] L1 Rules Setup
   - [ ] L2 Roster & Intake
   - [ ] L3 Engine
   - [ ] L4 Athlete Today
@@ -39,11 +39,11 @@ The Draft (`_reference/index.html`) → a Vault, through **V · A · U · L · T
 ## V — Verify (4–6 hrs)
 **Goal:** Clean the Draft's scope, save its data as a test case, stand up a clean scaffold.
 
-1. **Cut from the Draft (don't port):** demo controls (Next day, Redo, Reset demo), the seeded random history, the Coach tab's settings form (settings now come from imported sheets), every hard-coded sport, exercise, and number.
+1. **Cut from the Draft (don't port):** demo controls (Next day, Redo, Reset demo), the seeded random history, the Coach tab's settings form (settings now come from Setup), every hard-coded sport, exercise, and number.
 2. **Keep (proven logic to port):** scoring flow, plan flow, load formula, the athlete screen layout and interactions, CSS tokens, logo SVG.
 3. ~~Export the Draft's data~~ — **cut (2026-09-28).** Draft data is not migrated. The Draft stays in `_reference/` only to show how the prototype works.
 4. **New folder, new Supabase project** (`one-score-dev`). Never point the build at a live database.
-5. Scaffold React + Vite + TypeScript, Vitest, `pdfjs-dist`, `.env.example`, git, GitHub repo.
+5. Scaffold React + Vite + TypeScript, Vitest, `.env.example`, git, GitHub repo.
 
 **Done when:** the new app opens clean with zero console errors.
 
@@ -74,8 +74,8 @@ Dependency order, not click-through order. Record of truth first, reporting last
 
 | # | Module | Read | Port as-is from the Draft | Rebuild / add |
 |---|---|---|---|---|
-| L1 | **Rules Import** (record of truth) | `02-rules-contract.md`, `field-map.json`, `reference-importer.py` | nothing (new) | PDF upload → resolve → validate → `rules_versions`; plain-language errors; version diff |
-| L2 | **Roster & Intake** | `01-product.md` (Roster), `05-schema-and-access.md` | nothing | Add/edit/deactivate athletes; Athlete Intake PDF import; invite from roster; parent consent fields |
+| L1 | **Rules Setup** (record of truth) | `02-rules-contract.md`, `field-map.json`, `reference-importer.py` | nothing (new) | In-app questionnaire generated from `field-map.json` (16 sections, decisions → program → collapsed advanced); saves to `rules_drafts` as you go; Finish → resolve → validate → `rules_versions`; errors on each question; version diff |
+| L2 | **Roster & Intake** | `01-product.md` (Roster), `05-schema-and-access.md` | nothing | Add/edit/deactivate athletes via roster form (`ath.*` fields); invite from roster; parent consent fields |
 | L3 | **Engine** | `03-scoring-engine.md`, `04-plan-engine.md`, `06-vault-check-and-tests.md` | `readiness`, `scoreFor`, `acwr`, `jumpMod`, `plan`, `tonnage`, `nutrTargets` — structure only | Every constant → rule lookup. Phases, restrictions, build rules, flags. Pure TS + Vitest, all test cases incl. Two Coaches |
 | L4 | **Athlete Today** | `01-product.md` (Athlete) | Check-in taps, number-only score slab, collapsible blocks + Full session toggle, Save session, nutrition entry | Writes `checkins`, `daily_results` snapshot, `sessions` (load via engine), `nutrition_logs`. PWA install |
 | L5 | **Availability** | `04-plan-engine.md` §2, §9 | Status line on athlete screen | Status + restrictions editor, `status_log`, `audit_log`, return-to-train |
@@ -85,7 +85,7 @@ Dependency order, not click-through order. Record of truth first, reporting last
 
 Then, in this order:
 - **Brand once** — one token file `src/theme/tokens.css` from the Draft's tokens. Search the codebase: no hex colors or fonts outside it.
-- **Second tenant leak hunt** — create Tenant B **through the real signup flow** (not inserted by hand). Import a different set of sheets. Walk every screen as Owner, Operator, and Athlete of B. Any trace of A = bug.
+- **Second tenant leak hunt** — create Tenant B **through the real signup flow** (not inserted by hand). Answer Setup differently. Walk every screen as Owner, Operator, and Athlete of B. Any trace of A = bug.
 - **Owner re-skin** — `tenant_branding`: display name, logo, accent color only. Zone colors never change. Same features for everyone. White-label is paint, not a fork.
 
 **Done when:** every module passes its tests, the leak hunt finds nothing, and re-skin works.
@@ -94,7 +94,7 @@ Then, in this order:
 1. Stripe secret key in a Supabase Edge Function. Nowhere else.
 2. Stripe webhook (Edge Function) flips `tenants.subscription_status`.
 3. Access gated on `subscription_status` in RLS — not by hiding a button. Architect can comp a tenant.
-4. **Run your own real data through a full cycle first** — an IRCS or STS test tenant: import sheets, invite athletes, 7+ days of check-ins, sessions, overrides, a share link, a billing cycle.
+4. **Run your own real data through a full cycle first** — an IRCS or STS test tenant: complete Setup, invite athletes, 7+ days of check-ins, sessions, overrides, a share link, a billing cycle.
 5. Deploy: Netlify from GitHub → `one-score-prod`. Environment variables set in two places (Netlify + Supabase) — confirm they match.
 6. Run the full **Vault Check**.
 7. Keep the Draft live two weeks after cutover.
@@ -109,7 +109,7 @@ Pilot (one facility, 10 athletes, 2 weeks, 80%+ check-in rate, under 30-second c
 ## The Vault Prompts (filled in for One Score)
 
 ### Kickoff Prompt
-> I'm running One Score through the VAULT Standard. Reference is _reference/index.html — read it in full, but nothing gets copied out except the scoring flow, the plan flow, the load formula, the athlete screen layout, and the CSS tokens. Every constant in that logic becomes a lookup in the tenant's imported rules (read docs/02-rules-contract.md and _reference/field-map.json). Target: React + Vite + Supabase, real relational tables, RLS, multi-tenant from day one, payments later. Don't write code yet — give me the feature inventory by module, what's worth porting versus rebuilding, and a proposed schema with tenant_id on every table, checked against docs/05-schema-and-access.md. Then stop.
+> I'm running One Score through the VAULT Standard. Reference is _reference/index.html — read it in full, but nothing gets copied out except the scoring flow, the plan flow, the load formula, the athlete screen layout, and the CSS tokens. Every constant in that logic becomes a lookup in the tenant's rules (read docs/02-rules-contract.md and _reference/field-map.json). Target: React + Vite + Supabase, real relational tables, RLS, multi-tenant from day one, payments later. Don't write code yet — give me the feature inventory by module, what's worth porting versus rebuilding, and a proposed schema with tenant_id on every table, checked against docs/05-schema-and-access.md. Then stop.
 
 ### Phase Prompt
 > Phase [V/A/U/L/T] only. Do not start the next phase. Read CLAUDE.md and VAULT-PLAN.md first for current status. [the specific work from this plan]. List what you'll touch and stop before making changes.
@@ -131,20 +131,22 @@ Pilot (one facility, 10 athletes, 2 weeks, 80%+ check-in rate, under 30-second c
 ## Decisions Log
 _Newest on top. Date — decision — why._
 
+- **2026-09-28 — Setup moves into the app; PDFs dropped.** The coach answers every question in the app, start to finish, instead of filling 16 PDFs. The Setup screen is generated from `field-map.json`, saves as they go (`rules_drafts`), and shows errors on the question itself. Athlete intake is the roster form. Layer 1 philosophy questions are skipped (the engine never used them). `pdfjs-dist` removed. Why: one place to finish, no file handling, errors where the coach can fix them. Engine, rules shape, and every other module unchanged. Supersedes kickoff answer 7.
+
 - **2026-09-28 — Kickoff answers** (full inventory + proposed schema in `docs/00-kickoff-inventory.md`):
   1. **Lift-day minutes stay open.** No rule sets them, so the athlete types minutes on lift days. Practice/game minutes prefill from `team.practice_min` / `team.game_min`.
   2. **Multi-sport = `ath.sport`.** Phases are facility-wide, so "In-season sport wins" can't be computed. The athlete's `ath.sport` is treated as the in-season sport until sport-specific phases exist.
   3. **Test box always shows** on `test.weekly.day`, whatever the zone (the zone isn't known until after check-in anyway). `test.yellow` / `test.red` are imported but not used by the engine in v1.
   4. **Same-day changes rebuild today.** A status change or override after check-in rebuilds today's `daily_results` (logged in `audit_log`). Past days never change.
-  5. **Consent on the roster + birth year.** Owner/Operator records parent consent on the roster screen. `birth_year` replaces `age` (age goes stale). Needs the intake PDF updated.
+  5. **Consent on the roster + birth year.** Owner/Operator records parent consent on the roster screen. `birth_year` replaces `age` (age goes stale).
   6. **Re-import can't orphan athletes.** If a new import drops a sport an active athlete is on, the import fails and names those athletes.
-  7. **PDFs aren't stored.** Coaches still fill every sheet — the sheets are the program. The app reads the values, saves them to `rules_versions.raw`, and discards the file.
+  7. _(Superseded same day — Setup moved into the app, see the entry above.)_ **PDFs aren't stored.** Coaches still fill every sheet — the sheets are the program. The app reads the values, saves them to `rules_versions.raw`, and discards the file.
   8. **Draft data not migrated.** The Draft is reference only. V step 3 and A step 5 cut.
   9. **Sleep tap 1 = 5.9 hours.** When comparing sleep taps to hours, tap 1 ("under `sleep.tap1`") counts as `sleep.tap1 − 0.1`; taps 2–5 count as their value.
 
 - **2026-09-28 — Built through The Vault Standard.** Five Locks, Four Roles, Vault schema, Vault Check before any customer touches it.
-- **2026-09-28 — Rules come only from the sheets.** The app ships blank. The Draft's numbers are examples. Defaults would quietly replace the facility's philosophy.
-- **2026-09-28 — Four-layer sheets.** Philosophy (not imported) → Decisions (required, set numbers) → Program → Advanced (optional overrides, Architect territory during the install).
+- **2026-09-28 — Rules come only from Setup (originally: the sheets).** The app ships blank. The Draft's numbers are examples. Defaults would quietly replace the facility's philosophy.
+- **2026-09-28 — Four-layer sheets** (Philosophy later dropped when Setup moved in-app). Philosophy (not imported) → Decisions (required, set numbers) → Program → Advanced (optional overrides, Architect territory during the install).
 - **2026-09-28 — Athletes use real auth per the Standard.** Email + 8-character password via invite. For minors the invite may go to a parent's email. (Open question in FEATURE-IDEAS: whether a PIN option is ever worth a documented exception.)
 - **2026-09-28 — Operator titles.** Coach and athletic trainer are both Operators; `title` handles `override.who` and clearance records. Permission still comes from role + RLS.
 

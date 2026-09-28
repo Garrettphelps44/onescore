@@ -15,6 +15,8 @@ Parking lot. Nothing here gets built mid-phase. Pull an idea into VAULT-PLAN.md 
 - Sport-specific phase dates (per sport instead of per facility)
 - Multi-facility Owner view (one Owner, several tenants)
 - Upper-body anchor swap library for No lower body days
+- Printable / PDF export of a facility's Setup answers
+- Philosophy notes (the old Layer 1 "why" questions) as optional text in Setup
 - Coach-board reminders: max re-test due (`test.max_retest_weeks`), bodyweight update due (`profile.bw_update`)
 - Use `test.yellow` / `test.red` once testing beyond the weekly check-in box exists
 
