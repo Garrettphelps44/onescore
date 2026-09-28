@@ -9,13 +9,13 @@ The Draft (`_reference/index.html`) → a Vault, through **V · A · U · L · T
 ---
 
 ## Status
-- [ ] **V** — Verify
+- [x] **V** — Verify _(Supabase project deferred to the start of A)_
 - [ ] **A** — Architect
 - [ ] **U** — Unlock
 - [ ] **L** — Layer
   - [ ] L1 Rules Setup
   - [ ] L2 Roster & Intake
-  - [ ] L3 Engine
+  - [ ] L3 Engine _(approved to build early, before A — see Decisions Log)_
   - [ ] L4 Athlete Today
   - [ ] L5 Availability
   - [ ] L6 Coach Board & Athlete Detail
@@ -42,13 +42,15 @@ The Draft (`_reference/index.html`) → a Vault, through **V · A · U · L · T
 1. **Cut from the Draft (don't port):** demo controls (Next day, Redo, Reset demo), the seeded random history, the Coach tab's settings form (settings now come from Setup), every hard-coded sport, exercise, and number.
 2. **Keep (proven logic to port):** scoring flow, plan flow, load formula, the athlete screen layout and interactions, CSS tokens, logo SVG.
 3. ~~Export the Draft's data~~ — **cut (2026-09-28).** Draft data is not migrated. The Draft stays in `_reference/` only to show how the prototype works.
-4. **New folder, new Supabase project** (`one-score-dev`). Never point the build at a live database.
+4. **New folder, new Supabase project** (`one-score-dev`). Never point the build at a live database. _Deferred (2026-09-28): creating `one-score-dev` is now step 0 of phase A._
 5. Scaffold React + Vite + TypeScript, Vitest, `.env.example`, git, GitHub repo.
 
 **Done when:** the new app opens clean with zero console errors.
 
 ## A — Architect (4–6 hrs)
 **Goal:** The real schema and the real security. This is the actual rebuild. Spec: `docs/05-schema-and-access.md`.
+
+0. **Create Supabase `one-score-dev`** and fill `.env.local` (deferred from V).
 
 1. Vault base tables: `tenants`, `tenant_members`, `tenant_branding`, `invites`, `audit_log`, `share_tokens`.
 2. One Score domain tables, every one with `tenant_id`.
@@ -131,6 +133,8 @@ Pilot (one facility, 10 athletes, 2 weeks, 80%+ check-in rate, under 30-second c
 ## Decisions Log
 _Newest on top. Date — decision — why._
 
+- **2026-09-28 — L3 Engine built early, before A; Supabase deferred.** Garrett isn't creating a Supabase project yet. V closes without it; creating `one-score-dev` becomes step 0 of A. L3 is pure functions + tests with no database, no screens, and no dependency on the schema, so it can be built out of order without risk. Exception to "no skipping ahead" — only L3; A → U → L1, L2, L4… still run in order. L3's module checkbox stays open until its tests pass.
+
 - **2026-09-28 — Setup moves into the app; PDFs dropped.** The coach answers every question in the app, start to finish, instead of filling 16 PDFs. The Setup screen is generated from `field-map.json`, saves as they go (`rules_drafts`), and shows errors on the question itself. Athlete intake is the roster form. Layer 1 philosophy questions are skipped (the engine never used them). `pdfjs-dist` removed. Why: one place to finish, no file handling, errors where the coach can fix them. Engine, rules shape, and every other module unchanged. Supersedes kickoff answer 7.
 
 - **2026-09-28 — Kickoff answers** (full inventory + proposed schema in `docs/00-kickoff-inventory.md`):
@@ -152,3 +156,5 @@ _Newest on top. Date — decision — why._
 
 ## Changes vs plan
 _Seal Prompt fills this in._
+
+- **V (sealed 2026-09-28):** Scaffold, git, GitHub (`Garrettphelps44/onescore`) done; test/build/lint pass; zero console errors. Changed vs plan: Draft data export cut (not migrated); `pdfjs-dist` installed then removed when Setup moved into the app; Supabase project deferred to A step 0. No schema yet, so no isolation re-test.

@@ -7,10 +7,10 @@
 **Who's building:** Garrett (Architect) is a strength coach, not a professional developer. Explain in plain language. When a step needs him, tell him exactly what to click or paste.
 
 ## Current Status
-- **Phase:** V — Verify (in progress)
-- **Last session:** 2026-09-28 — Kickoff done (inventory in `docs/00-kickoff-inventory.md`, 9 decisions in `VAULT-PLAN.md`). V scaffold built: React + Vite + TS, Vitest, supabase-js, `.env.example`, git → github.com/Garrettphelps44/onescore. Test, build, lint pass; app opens with zero console errors. `field-map.json` uses `ath.birth_year`. Setup moved from PDFs into the app (see Decisions Log); `pdfjs-dist` removed.
-- **Next:** Garrett creates Supabase project `one-score-dev` and fills `.env.local`. Then Seal V and start A.
-- **Broken / deferred:** —
+- **Phase:** V done (Supabase deferred). **L3 Engine approved early**, before A — not started.
+- **Last session:** 2026-09-28 — Kickoff, V scaffold (React + Vite + TS, Vitest, supabase-js, git → github.com/Garrettphelps44/onescore), Setup moved from PDFs into the app, V sealed.
+- **Next:** L3 Module Prompt (list behaviors, stop for cuts), then build `src/engine/`. After L3: Phase A, starting with creating Supabase `one-score-dev`.
+- **Broken / deferred:** Supabase project not created (A step 0). `src/lib/supabase.ts` throws if imported without `.env.local` — nothing imports it yet.
 
 _Update this block with the Seal Prompt at the end of every session._
 
